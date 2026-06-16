@@ -381,9 +381,12 @@ input[type=number]:focus{border-color:#1a1a2e}
     </div>
     <div class="hbtn-row">
       <button class="hbtn2" id="sc-btn" onclick="toggleSC()" style="background:#E3F2FD;color:#1565C0">📱 Step Counter</button>
-      <button class="hbtn2" onclick="openHSync()" style="background:#FFF8E1;color:#E65100">✏️ Manual Sync</button>
+      <button class="hbtn2" onclick="openHSync()" style="background:#FFF8E1;color:#E65100">✏️ Manual</button>
     </div>
-    <button class="conbtn" id="conb" onclick="openHSync()">📊 Health Data Sync کریں</button>
+    <button class="conbtn" onclick="openGFSetup()" style="background:linear-gradient(135deg,#4285F4,#34A853);margin-top:8px">
+      <span style="font-size:16px">G</span> Google Fit سے Real Sync کریں
+    </button>
+    <div id="gf-status" style="display:none;background:#E8F5E9;border-radius:10px;padding:8px 12px;margin-top:8px;font-size:12px;color:#2E7D32;text-align:center"></div>
   </div>
   <div class="ccrd">
     <div class="ctitle">📊 ہفتہ وار کیلوریز</div>
@@ -509,6 +512,53 @@ input[type=number]:focus{border-color:#1a1a2e}
     </div>
     <div id="dd-meals" style="margin:12px 0"></div>
     <button id="dd-add" style="width:100%;background:#1a1a2e;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;margin-top:4px"></button>
+  </div>
+</div>
+
+<!-- GOOGLE FIT SETUP MODAL -->
+<div class="hsovl" id="gfs-ovl" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="hscard">
+    <div style="text-align:center;font-size:34px;margin-bottom:6px">🔗</div>
+    <div style="font-size:17px;font-weight:800;text-align:center;margin-bottom:3px">Samsung Health → Google Fit Sync</div>
+    <div style="font-size:12px;color:#888;text-align:center;margin-bottom:14px">Real data sync کے لیے یہ 3 Steps فالو کریں</div>
+
+    <div style="background:#E8F5E9;border-radius:12px;padding:12px;margin-bottom:10px">
+      <div style="font-size:13px;font-weight:800;color:#2E7D32;margin-bottom:6px">Step 1: Samsung Health کو Google Fit سے Connect کریں</div>
+      <div style="font-size:12px;color:#388E3C;line-height:1.6">
+        ① Samsung Health app کھولیں<br>
+        ② نیچے دائیں کونے میں Profile ٹیپ کریں<br>
+        ③ Settings → Connected Services<br>
+        ④ <strong>Google Fit</strong> تلاش کریں اور Connect کریں<br>
+        ⑤ Sync کریں — اب Samsung Health کا data Google Fit میں جائے گا
+      </div>
+    </div>
+
+    <div style="background:#E3F2FD;border-radius:12px;padding:12px;margin-bottom:10px">
+      <div style="font-size:13px;font-weight:800;color:#1565C0;margin-bottom:6px">Step 2: Google OAuth Client ID بنائیں (ایک بار)</div>
+      <div style="font-size:12px;color:#1976D2;line-height:1.6">
+        ① console.cloud.google.com کھولیں<br>
+        ② New Project بنائیں → Fitness API enable کریں<br>
+        ③ Credentials → Create OAuth 2.0 Client ID<br>
+        ④ Type: <strong>Web Application</strong><br>
+        ⑤ Redirect URI میں اس app کا URL ڈالیں<br>
+        ⑥ Client ID copy کریں
+      </div>
+    </div>
+
+    <div style="background:#FFF8E1;border-radius:12px;padding:12px;margin-bottom:14px">
+      <div style="font-size:13px;font-weight:800;color:#E65100;margin-bottom:6px">Step 3: Client ID یہاں ڈالیں</div>
+      <input class="hsinp" type="text" id="gf-cid" placeholder="xxxx.apps.googleusercontent.com" style="font-size:12px">
+      <div style="font-size:10px;color:#aaa;margin-top:4px">یہ ایک بار save ہو جائے گا</div>
+    </div>
+
+    <div style="background:#f5f5f5;border-radius:10px;padding:10px;margin-bottom:14px;font-size:11px;color:#888;text-align:center">
+      ⚠️ <strong>نوٹ:</strong> یہ feature صرف HTTPS پر host کردہ app میں کام کرتا ہے۔ GitHub Pages (مفت) پر deploy کریں یا local server چلائیں۔
+    </div>
+
+    <div style="display:flex;gap:10px">
+      <button onclick="document.getElementById('gfs-ovl').classList.remove('show')" style="flex:1;background:#f5f5f5;border:none;border-radius:12px;padding:13px;font-size:13px;font-weight:600;color:#666;cursor:pointer">Cancel</button>
+      <button onclick="connectGFit()" style="flex:2;background:linear-gradient(135deg,#4285F4,#34A853);border:none;border-radius:12px;padding:13px;font-size:13px;font-weight:700;color:#fff;cursor:pointer">🔗 Google Fit Connect کریں</button>
+    </div>
   </div>
 </div>
 
@@ -907,6 +957,80 @@ function openDayD(key,d){
   document.getElementById('ddo').classList.add('show');
 }
 
+// ── GOOGLE FIT ───────────────────────────────────────────────
+const GF_SCOPE=encodeURIComponent('https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/fitness.heart_rate.read https://www.googleapis.com/auth/fitness.body.read');
+
+function openGFSetup(){
+  const saved=localStorage.getItem('gf_cid')||'';
+  document.getElementById('gf-cid').value=saved;
+  document.getElementById('gfs-ovl').classList.add('show');
+}
+
+function connectGFit(){
+  const cid=document.getElementById('gf-cid').value.trim();
+  if(!cid){toast('❌ Client ID درج کریں');return;}
+  localStorage.setItem('gf_cid',cid);
+  const redir=encodeURIComponent(location.href.split('?')[0].split('#')[0]);
+  const url=`https://accounts.google.com/o/oauth2/v2/auth?client_id=${cid}&redirect_uri=${redir}&response_type=token&scope=${GF_SCOPE}&prompt=consent`;
+  document.getElementById('gfs-ovl').classList.remove('show');
+  toast('⏳ Google کی طرف redirect ہو رہا ہے...');
+  setTimeout(()=>{location.href=url;},600);
+}
+
+function checkGFToken(){
+  const hash=location.hash;
+  if(!hash.includes('access_token'))return;
+  const params=new URLSearchParams(hash.substring(1));
+  const token=params.get('access_token');
+  if(!token)return;
+  history.replaceState(null,'',location.pathname);
+  toast('✅ Google Fit connected! Data آ رہا ہے...');
+  fetchGFData(token);
+}
+
+async function fetchGFData(token){
+  const now=Date.now();
+  const sod=new Date();sod.setHours(0,0,0,0);
+  const body={
+    aggregateBy:[
+      {dataTypeName:'com.google.step_count.delta'},
+      {dataTypeName:'com.google.calories.expended'},
+      {dataTypeName:'com.google.heart_rate.bpm'}
+    ],
+    bucketByTime:{durationMillis:86400000},
+    startTimeMillis:sod.getTime(),
+    endTimeMillis:now
+  };
+  try{
+    const r=await fetch('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    if(!r.ok)throw new Error(r.status);
+    const d=await r.json();
+    let steps=0,cal=0,hr=0;
+    (d.bucket||[]).forEach(b=>{
+      (b.dataset||[]).forEach(ds=>{
+        (ds.point||[]).forEach(p=>{
+          if(ds.dataSourceId.includes('step_count'))steps+=(p.value[0]?.intVal||0);
+          if(ds.dataSourceId.includes('calories'))cal+=(p.value[0]?.fpVal||0);
+          if(ds.dataSourceId.includes('heart_rate'))hr=(p.value[0]?.fpVal||0);
+        });
+      });
+    });
+    ST.steps=steps;
+    ST.hc=true;
+    ST.health={...ST.health,hr:Math.round(hr)||undefined,calBurned:Math.round(cal),lastSync:new Date().toLocaleTimeString('en-PK',{hour:'2-digit',minute:'2-digit'}),source:'Samsung Health → Google Fit'};
+    SS();rProfile();rHome();
+    toast(`✅ Samsung Health sync! ${steps.toLocaleString()} steps | ${Math.round(cal)} cal`);
+    const el=document.getElementById('gf-status');
+    if(el){el.style.display='block';el.textContent=`✅ Samsung Health synced — ${steps.toLocaleString()} steps, ${Math.round(cal)} cal burned`;}
+  }catch(e){
+    toast('❌ Google Fit error: '+e.message+' — دوبارہ connect کریں');
+  }
+}
+
 // ── HEALTH SYNC ──────────────────────────────────────────────
 let scRunning=false,lastMag=9.8,stepCD=false;
 
@@ -1057,7 +1181,7 @@ LS();
 SG=ST.prof.g||'male';SA=ST.prof.act||'moderate';SGL=ST.prof.goal||'maintain';
 document.getElementById('bw').value=ST.prof.w||70;document.getElementById('bh').value=ST.prof.h||170;document.getElementById('ba').value=ST.prof.age||25;
 if(ST.prof.name)document.getElementById('uname').value=ST.prof.name;
-sg(SG);rHome();
+sg(SG);checkGFToken();rHome();
 </script>
 </body>
 </html>
