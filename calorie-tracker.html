@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1a1a2e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Calorie Tracker">
+<title>🔥 Calorie Tracker Pakistan</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+body{background:#f0f2f5;color:#333;max-width:480px;margin:0 auto;min-height:100vh}
+.screen{display:none;padding-bottom:80px;min-height:100vh}
+.screen.active{display:block}
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid #eee;display:flex;z-index:100;box-shadow:0 -2px 12px rgba(0,0,0,.1)}
+.nb{flex:1;padding:8px 4px 10px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
+.nb .ni{font-size:22px;transition:transform .2s}
+.nb .nl{font-size:10px;color:#bbb;font-weight:600}
+.nb.active .nl{color:#1a1a2e}
+.nb.active .ni{transform:scale(1.2)}
+/* GRADIENT HEADER */
+.ghdr{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);padding:48px 20px 24px;color:#fff;text-align:center}
+.ghdr h1{font-size:20px;margin-bottom:4px}
+.ghdr p{font-size:13px;color:#ccc}
+/* CARD */
+.card{background:#fff;margin:12px 14px;border-radius:16px;padding:15px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+/* RING */
+.ring-wrap{display:flex;justify-content:center;margin:15px 0}
+.ring{width:155px;height:155px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:8px solid #4CAF50;background:rgba(0,0,0,.25)}
+.ring .rn{font-size:36px;font-weight:900;color:#4CAF50}
+.ring .rs{font-size:11px;color:#ccc;margin-top:2px}
+.pbar{height:8px;background:rgba(255,255,255,.2);border-radius:4px;margin:10px 20px;overflow:hidden}
+.pfill{height:100%;border-radius:4px;background:#4CAF50;transition:width .5s,background .3s}
+.srow{display:flex;justify-content:space-around;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.1)}
+.sbox{text-align:center;flex:1}
+.sbox .sv{font-size:20px;font-weight:800;color:#fff}
+.sbox .sl{font-size:10px;color:#aaa;margin-top:2px}
+.sdiv{width:1px;background:rgba(255,255,255,.2)}
+/* MACROS */
+.mrow{display:flex;gap:10px;margin-top:10px}
+.mcol{flex:1;text-align:center}
+.mbar{height:8px;border-radius:4px;margin-bottom:5px;overflow:hidden}
+.mfill{height:100%;border-radius:4px;transition:width .5s}
+.mv{font-size:16px;font-weight:800}.ml{font-size:11px;color:#777;margin-top:2px}
+/* QUICK */
+.qrow{display:flex;gap:10px;margin:12px 14px}
+.qcard{flex:1;background:#fff;border-radius:16px;padding:13px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.qcard .qe{font-size:26px;margin-bottom:4px}
+.qcard .qv{font-size:22px;font-weight:800}
+.qcard .ql{font-size:11px;color:#777;margin-top:2px}
+.qcard .qs{font-size:10px;color:#bbb;margin-top:3px}
+.wbtns{display:flex;gap:6px;justify-content:center;margin-top:8px}
+.wbtn{background:#E3F2FD;border:none;border-radius:8px;padding:5px 12px;color:#1976D2;font-weight:700;cursor:pointer;font-size:13px}
+.sbar{height:6px;background:#f0f0f0;border-radius:3px;overflow:hidden;margin-top:8px}
+.sfill{height:100%;background:#FF9800;border-radius:3px;transition:width .5s}
+/* MEAL */
+.mcard{background:#fff;margin:8px 14px;border-radius:14px;padding:13px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.mhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.mtitle{font-size:15px;font-weight:700}
+.mcal{color:#FF9800;font-weight:700;font-size:13px}
+.abtn{background:#1a1a2e;color:#fff;border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer}
+.emeal{background:#fafafa;border-radius:10px;padding:13px;text-align:center;border:1px dashed #ddd;color:#aaa;cursor:pointer;font-size:13px}
+.fentry{display:flex;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5}
+.fee{font-size:22px;margin-right:10px}
+.fei{flex:1}
+.fen{font-size:13px;font-weight:600}
+.fes{font-size:11px;color:#aaa;margin-top:2px}
+.fec{font-size:13px;font-weight:700;color:#FF9800;margin-right:8px}
+.dbtn{width:24px;height:24px;border-radius:12px;background:#ffebee;border:none;color:#F44336;font-size:12px;cursor:pointer;font-weight:700}
+/* FOOD SEARCH */
+.shdr{background:#1a1a2e;padding:48px 14px 14px;display:flex;align-items:center;gap:10px}
+.bbtn{background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;font-size:13px}
+.stitle{color:#fff;font-size:16px;font-weight:700}
+.sbox2{display:flex;align-items:center;background:#fff;margin:11px;border-radius:12px;padding:0 11px;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+.sbox2 input{flex:1;height:44px;border:none;outline:none;font-size:14px;color:#333}
+.si{font-size:18px;margin-right:8px}
+.xbtn{background:none;border:none;color:#aaa;font-size:16px;cursor:pointer;padding:4px}
+.cscroll{display:flex;gap:8px;padding:0 11px 10px;overflow-x:auto;scrollbar-width:none}
+.cscroll::-webkit-scrollbar{display:none}
+.cchip{background:#fff;border:1.5px solid #ddd;border-radius:20px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.cchip.active{background:#1a1a2e;border-color:#1a1a2e;color:#fff}
+.rcnt{padding:3px 14px 6px;color:#888;font-size:13px}
+.flist{padding:0 11px 20px}
+.fcard{background:#fff;border-radius:12px;padding:11px;margin-bottom:8px;display:flex;box-shadow:0 1px 5px rgba(0,0,0,.07);cursor:pointer;align-items:center}
+.fce{font-size:30px;margin-right:11px;flex-shrink:0}
+.fcm{flex:1;min-width:0}
+.fcn{font-size:14px;font-weight:700;color:#222}
+.fcu{font-size:12px;color:#888;margin-top:1px}
+.fcsrv{font-size:11px;color:#aaa;margin-top:2px}
+.fcmac{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}
+.mt{background:#f5f5f5;border-radius:6px;padding:2px 6px;font-size:10px;color:#555}
+.fcr{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0}
+.cbadge{border-radius:10px;padding:4px 8px;text-align:center;min-width:52px}
+.cbadge .cn{color:#fff;font-weight:700;font-size:15px;display:block}
+.cbadge .ct{color:rgba(255,255,255,.8);font-size:10px;display:block}
+.fcadd{width:30px;height:30px;border-radius:15px;background:#1a1a2e;border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+/* MODAL */
+.movl{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;z-index:200;opacity:0;pointer-events:none;transition:opacity .3s}
+.movl.show{opacity:1;pointer-events:all}
+.mcard2{background:#fff;border-radius:24px 24px 0 0;padding:24px;width:100%;max-width:480px;margin:0 auto;transform:translateY(100%);transition:transform .3s}
+.movl.show .mcard2{transform:translateY(0)}
+.me{font-size:50px;text-align:center;display:block;margin-bottom:8px}
+.mn{font-size:20px;font-weight:800;text-align:center}
+.mu{font-size:14px;color:#888;text-align:center;margin:3px 0 4px}
+.ms{font-size:12px;color:#aaa;text-align:center;margin-bottom:14px}
+.ngrid{display:flex;background:#f9f9f9;border-radius:12px;padding:12px;margin-bottom:16px}
+.ni2{flex:1;text-align:center}
+.nv{font-size:18px;font-weight:800;color:#333;display:block}
+.nl2{font-size:10px;color:#888;margin-top:3px;display:block}
+.slbl{text-align:center;font-size:14px;font-weight:600;color:#555;margin-bottom:10px}
+.sctrl{display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:18px}
+.sbtn{width:44px;height:44px;border-radius:22px;background:#1a1a2e;border:none;color:#fff;font-size:22px;cursor:pointer;font-weight:700}
+.sval{font-size:24px;font-weight:800;min-width:40px;text-align:center}
+.mbtns{display:flex;gap:10px}
+.cbtn{flex:1;background:#f5f5f5;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:600;color:#666;cursor:pointer}
+.okbtn{flex:2;background:#1a1a2e;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;color:#fff;cursor:pointer}
+/* MEAL SELECTOR */
+.msovl{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:150;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .3s}
+.msovl.show{opacity:1;pointer-events:all}
+.mscard{background:#fff;border-radius:24px 24px 0 0;padding:20px;width:100%;max-width:480px;margin:0 auto;transform:translateY(100%);transition:transform .3s}
+.msovl.show .mscard{transform:translateY(0)}
+.mstitle{font-size:16px;font-weight:700;text-align:center;margin-bottom:15px}
+.msopts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.msopt{background:#f5f5f5;border:none;border-radius:12px;padding:14px;cursor:pointer;font-size:14px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:5px}
+.msopt .oe{font-size:26px}
+/* BMI */
+.bform{background:#fff;margin:12px 14px;border-radius:16px;padding:17px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.ftitle{font-size:17px;font-weight:800;color:#1a1a2e;text-align:center}
+.fsub{font-size:12px;color:#888;text-align:center;margin-bottom:15px}
+.ilbl{font-size:13px;font-weight:600;color:#555;margin-top:12px;margin-bottom:6px;display:block}
+.irow{display:flex;gap:10px}
+.ihalf{flex:1}
+input[type=number]{width:100%;border:1.5px solid #e0e0e0;border-radius:10px;padding:10px 12px;font-size:15px;color:#333;background:#fafafa;outline:none}
+input[type=number]:focus{border-color:#1a1a2e}
+.grow{display:flex;gap:10px}
+.gbtn2{flex:1;border:1.5px solid #e0e0e0;border-radius:10px;padding:11px;text-align:center;cursor:pointer;background:#fafafa}
+.gbtn2.active{border-color:#1a1a2e;background:#e8eaf6}
+.gbtn2 .ge2{font-size:26px;display:block;margin-bottom:3px}
+.gbtn2 .gt2{font-size:12px;color:#666}
+.gbtn2.active .gt2{color:#1a1a2e;font-weight:700}
+.actbtn{display:flex;align-items:center;border:1px solid #e0e0e0;border-radius:10px;padding:9px;margin-bottom:6px;cursor:pointer;background:#fafafa}
+.actbtn.active{border-color:#1a1a2e;background:#e8eaf6}
+.ae{font-size:20px;margin-right:10px}
+.ai{flex:1}
+.al{font-size:13px;font-weight:600;color:#555}
+.actbtn.active .al{color:#1a1a2e}
+.au{font-size:11px;color:#aaa}
+.glrow{display:flex;gap:8px}
+.glbtn{flex:1;border:1.5px solid #e0e0e0;border-radius:10px;padding:10px;text-align:center;cursor:pointer;background:#fafafa}
+.glbtn.active{border-color:#1a1a2e;background:#e8eaf6}
+.ge3{font-size:22px;display:block;margin-bottom:3px}
+.gl3{font-size:11px;color:#555;font-weight:600}
+.glbtn.active .gl3{color:#1a1a2e}
+.gu{font-size:10px;color:#aaa}
+.calcbtn{background:#1a1a2e;border:none;border-radius:12px;padding:14px;width:100%;font-size:16px;font-weight:700;color:#fff;cursor:pointer;margin-top:17px}
+.rcard{background:#fff;margin:10px 14px;border-radius:16px;padding:24px;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.1)}
+.bbig{font-size:64px;font-weight:900;line-height:1}
+.blbl{font-size:16px;color:#888;margin:5px 0 12px}
+.cbadge2{display:inline-block;padding:8px 20px;border-radius:20px;color:#fff;font-weight:700;font-size:15px;margin-bottom:8px}
+.curdu{font-size:17px;font-weight:700;color:#555}
+.sccard{background:#fff;margin:10px 14px;border-radius:16px;padding:15px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.sctitle{font-size:15px;font-weight:700;text-align:center;margin-bottom:12px}
+.scrow{display:flex;align-items:center;padding:6px 0;border-bottom:1px solid #f5f5f5}
+.scrow.hl{background:#f0f4ff;border-radius:8px;padding:6px 8px}
+.scdot{width:12px;height:12px;border-radius:50%;margin-right:10px;flex-shrink:0}
+.scinfo{flex:1}
+.sclbl{font-size:12px;font-weight:600;color:#333}
+.scurdu{font-size:10px;color:#aaa}
+.scr{font-size:12px;color:#888;margin-right:6px}
+.scyou{font-size:11px;color:#1a1a2e;font-weight:700}
+.idcard{background:#fff;margin:10px 14px;border-radius:16px;padding:17px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.idtitle{font-size:16px;font-weight:700;color:#1a1a2e}
+.idsub{font-size:12px;color:#888;margin-bottom:12px}
+.idval{font-size:24px;font-weight:800;color:#4CAF50}
+.wadv{background:#FFF8E1;border-radius:10px;padding:10px;font-size:13px;color:#E65100;margin-top:10px}
+.crcard{background:#fff;margin:10px 14px;border-radius:16px;padding:15px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.crtitle{font-size:15px;font-weight:700;text-align:center;margin-bottom:12px}
+.crrow{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid #f5f5f5}
+.crre{font-size:20px;margin-right:10px}
+.crinfo{flex:1}
+.crlbl{font-size:13px;font-weight:600;color:#333}
+.crurdu{font-size:11px;color:#aaa}
+.crval{font-size:17px;font-weight:800}
+/* PROFILE */
+.phdr{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);padding:50px 20px 24px;color:#fff;text-align:center}
+.avt{width:88px;height:88px;border-radius:44px;background:rgba(255,255,255,.2);border:3px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-size:46px;margin:0 auto 12px}
+.pname{font-size:20px;font-weight:700;margin-bottom:4px}
+.pinfo{font-size:13px;color:#ccc;margin-bottom:14px}
+.epbtn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:20px;padding:7px 18px;color:#fff;font-size:13px;cursor:pointer}
+.sgrid{display:flex;flex-wrap:wrap;padding:10px;gap:10px}
+.scard2{width:calc(50% - 5px);background:#fff;border-radius:12px;padding:13px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.07);border-top:3px solid #4CAF50}
+.sce{font-size:24px;margin-bottom:4px}
+.scv{font-size:22px;font-weight:800;color:#333}
+.scl2{font-size:12px;color:#888;margin-top:3px}
+.scs{font-size:10px;color:#bbb;margin-top:2px}
+.hcard{background:#fff;margin:5px 14px 12px;border-radius:16px;padding:15px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.hhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.htitle{font-size:16px;font-weight:700;color:#1a1a2e}
+.hdot{width:12px;height:12px;border-radius:50%;background:#FF5722}
+.hdot.on{background:#4CAF50}
+.hsub{font-size:12px;color:#888;margin-bottom:13px}
+.hfi{display:flex;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5}
+.hfe{font-size:20px;margin-right:12px;width:27px}
+.hfl{font-size:13px;font-weight:600;color:#333;flex:1}
+.hfu{font-size:11px;color:#aaa}
+.hck{font-size:15px}
+.conbtn{background:#1a1a2e;border:none;border-radius:12px;padding:12px;width:100%;font-size:14px;font-weight:700;color:#fff;cursor:pointer;margin-top:12px}
+.ccrd{background:#fff;margin:12px 14px;border-radius:16px;padding:15px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.ctitle{font-size:15px;font-weight:700;text-align:center}
+.csub{font-size:12px;color:#aaa;text-align:center;margin-bottom:15px}
+.chrt{display:flex;justify-content:space-around;align-items:flex-end;height:130px}
+.bcol{display:flex;flex-direction:column;align-items:center;flex:1}
+.bnum{font-size:8px;color:#888;margin-bottom:2px;text-align:center;min-height:10px}
+.bwrap{width:24px;display:flex;flex-direction:column;justify-content:flex-end;height:100px}
+.bar2{width:24px;border-radius:5px;min-height:4px;background:#1a1a2e}
+.bday{font-size:10px;color:#888;margin-top:5px;font-weight:600}
+.btoday{color:#1a1a2e;font-weight:800}
+.btlbl{font-size:9px;color:#4CAF50;font-weight:700}
+.cleg{display:flex;justify-content:center;gap:16px;margin-top:10px}
+.cli{display:flex;align-items:center;gap:4px}
+.cld{width:10px;height:10px;border-radius:50%}
+.clt{font-size:11px;color:#888}
+.tcard{background:#fff;margin:12px 14px;border-radius:16px;padding:15px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.tt{font-size:16px;font-weight:700;color:#1a1a2e;text-align:center}
+.ts{font-size:12px;color:#aaa;text-align:center;margin-bottom:13px}
+.ti{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid #f5f5f5}
+.tie{font-size:20px;margin-right:12px}
+.tit{flex:1}
+.tit1{font-size:13px;color:#333;font-weight:500}
+.tit2{font-size:11px;color:#aaa;margin-top:2px}
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:90%}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="sc-home" class="screen active">
+  <div class="ghdr">
+    <p id="dt" style="font-size:12px;color:#aaa;margin-bottom:5px"></p>
+    <h1>آج کی کیلوریز 🔥</h1>
+    <p>Today's Calories</p>
+    <div class="ring-wrap">
+      <div class="ring" id="ring">
+        <span class="rn" id="rn">0</span>
+        <span class="rs">کھائی گئی / Consumed</span>
+      </div>
+    </div>
+    <div class="pbar"><div class="pfill" id="pf" style="width:0%"></div></div>
+    <div class="srow">
+      <div class="sbox"><div class="sv" id="gv">2000</div><div class="sl">🎯 ہدف</div></div>
+      <div class="sdiv"></div>
+      <div class="sbox"><div class="sv" id="rv">2000</div><div class="sl" id="rl">✅ باقی</div></div>
+      <div class="sdiv"></div>
+      <div class="sbox"><div class="sv" id="bv">0</div><div class="sl">🔥 جلی</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="font-size:15px;font-weight:700;margin-bottom:11px">💊 Macros آج کے</div>
+    <div class="mrow">
+      <div class="mcol"><div class="mbar" style="background:#E3F2FD"><div class="mfill" id="pb" style="width:0%;background:#2196F3"></div></div><div class="mv" id="pv">0g</div><div class="ml">🥩 Protein</div></div>
+      <div class="mcol"><div class="mbar" style="background:#FFF9C4"><div class="mfill" id="cb2" style="width:0%;background:#FFC107"></div></div><div class="mv" id="cv2">0g</div><div class="ml">🌾 Carbs</div></div>
+      <div class="mcol"><div class="mbar" style="background:#FCE4EC"><div class="mfill" id="fb" style="width:0%;background:#E91E63"></div></div><div class="mv" id="fv2">0g</div><div class="ml">🫒 Fat</div></div>
+    </div>
+  </div>
+  <div class="qrow">
+    <div class="qcard"><div class="qe">💧</div><div class="qv" id="wv">0</div><div class="ql">Glasses پانی</div><div class="wbtns"><button class="wbtn" onclick="cW(1)">+1</button><button class="wbtn" onclick="cW(-1)">-1</button></div><div class="qs">Goal: 8 glasses</div></div>
+    <div class="qcard"><div class="qe">👟</div><div class="qv" id="stv">0</div><div class="ql">قدم / Steps</div><div class="sbar"><div class="sfill" id="stf" style="width:0%"></div></div><div class="qs">Goal: 10,000</div></div>
+  </div>
+  <div id="meals"></div>
+</div>
+
+<!-- FOOD SEARCH -->
+<div id="sc-food" class="screen">
+  <div class="shdr">
+    <button class="bbtn" onclick="go('home')">← Back</button>
+    <div><div class="stitle">🍽️ کھانا تلاش کریں</div><div style="color:#ccc;font-size:12px;margin-top:2px" id="sml"></div></div>
+  </div>
+  <div class="sbox2"><span class="si">🔍</span><input type="text" id="si2" placeholder="biryani, zinger, chai, pepsi..." oninput="ff()"><button class="xbtn" onclick="cx()">✕</button></div>
+  <div class="cscroll" id="cs"></div>
+  <div class="rcnt" id="rc"></div>
+  <div class="flist" id="fl"></div>
+</div>
+
+<!-- BMI -->
+<div id="sc-bmi" class="screen">
+  <div class="ghdr"><h1>⚖️ BMI کیلکولیٹر</h1><p>Body Mass Index Calculator</p></div>
+  <div class="bform">
+    <div class="ftitle">📊 اپنی معلومات درج کریں</div>
+    <div class="fsub">Enter Your Information</div>
+    <span class="ilbl">جنس / Gender</span>
+    <div class="grow">
+      <div class="gbtn2 active" id="gm" onclick="sg('male')"><span class="ge2">👨</span><span class="gt2">Male - مرد</span></div>
+      <div class="gbtn2" id="gf" onclick="sg('female')"><span class="ge2">👩</span><span class="gt2">Female - عورت</span></div>
+    </div>
+    <div class="irow">
+      <div class="ihalf"><span class="ilbl">⚖️ وزن (kg)</span><input type="number" id="bw" value="70" placeholder="70"></div>
+      <div class="ihalf"><span class="ilbl">📏 قد (cm)</span><input type="number" id="bh" value="170" placeholder="170"></div>
+    </div>
+    <span class="ilbl">🎂 عمر / Age (years)</span>
+    <input type="number" id="ba" value="25" placeholder="25">
+    <span class="ilbl">🏃 سرگرمی / Activity Level</span>
+    <div id="abtns"></div>
+    <span class="ilbl">🎯 مقصد / Goal</span>
+    <div class="glrow" id="gbtns"></div>
+    <button class="calcbtn" onclick="calcBMI()">⚖️ Calculate BMI - حساب لگائیں</button>
+  </div>
+  <div id="br"></div>
+</div>
+
+<!-- PROFILE -->
+<div id="sc-profile" class="screen">
+  <div class="phdr">
+    <div class="avt" id="avt">👨</div>
+    <div class="pname">میرا پروفائل</div>
+    <div class="pinfo" id="pi">25 سال | 70 kg | 170 cm</div>
+    <button class="epbtn" onclick="go('bmi')">✏️ Profile Edit کریں</button>
+  </div>
+  <div class="sgrid" id="psg"></div>
+  <div class="hcard">
+    <div class="hhdr"><div class="htitle">🤖 Google Health Connect</div><div class="hdot" id="hd"></div></div>
+    <div class="hsub" id="hs">Health app سے steps اور data sync کریں</div>
+    <div id="hfs"></div>
+    <button class="conbtn" id="conb" onclick="conH()">📱 Health Connect کریں</button>
+  </div>
+  <div class="ccrd">
+    <div class="ctitle">📊 ہفتہ وار کیلوریز</div>
+    <div class="csub">Weekly Calorie History</div>
+    <div class="chrt" id="wc"></div>
+    <div class="cleg">
+      <div class="cli"><div class="cld" style="background:#4CAF50"></div><span class="clt">آج</span></div>
+      <div class="cli"><div class="cld" style="background:#FF5722"></div><span class="clt">زیادہ</span></div>
+      <div class="cli"><div class="cld" style="background:#1a1a2e"></div><span class="clt">عام</span></div>
+    </div>
+  </div>
+  <div class="tcard">
+    <div class="tt">💡 صحت کے مشورے</div>
+    <div class="ts">Health Tips</div>
+    <div id="tl"></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="bnav">
+  <button class="nb active" id="n-home" onclick="go('home')"><span class="ni">🏠</span><span class="nl">Home</span></button>
+  <button class="nb" id="n-food" onclick="openMS()"><span class="ni">🍽️</span><span class="nl">Food</span></button>
+  <button class="nb" id="n-bmi" onclick="go('bmi')"><span class="ni">⚖️</span><span class="nl">BMI</span></button>
+  <button class="nb" id="n-profile" onclick="go('profile')"><span class="ni">👤</span><span class="nl">Profile</span></button>
+</nav>
+
+<!-- FOOD MODAL -->
+<div class="movl" id="fm" onclick="if(event.target===this)cM()">
+  <div class="mcard2">
+    <span class="me" id="me"></span>
+    <div class="mn" id="mnn"></div>
+    <div class="mu" id="mu"></div>
+    <div class="ms" id="mss"></div>
+    <div class="ngrid">
+      <div class="ni2"><span class="nv" id="mc">0</span><span class="nl2">🔥 Calories</span></div>
+      <div class="ni2"><span class="nv" id="mp">0g</span><span class="nl2">🥩 Protein</span></div>
+      <div class="ni2"><span class="nv" id="mcb">0g</span><span class="nl2">🌾 Carbs</span></div>
+      <div class="ni2"><span class="nv" id="mf">0g</span><span class="nl2">🫒 Fat</span></div>
+    </div>
+    <div class="slbl">Servings - سرونگز</div>
+    <div class="sctrl">
+      <button class="sbtn" onclick="cS(-0.5)">−</button>
+      <span class="sval" id="sv2">1</span>
+      <button class="sbtn" onclick="cS(0.5)">+</button>
+    </div>
+    <div class="mbtns">
+      <button class="cbtn" onclick="cM()">Cancel</button>
+      <button class="okbtn" onclick="confAdd()">✅ شامل کریں / Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- MEAL SELECTOR -->
+<div class="msovl" id="mso" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="mscard">
+    <div class="mstitle">کس وقت کا کھانا؟ Which meal?</div>
+    <div class="msopts">
+      <button class="msopt" onclick="openFS('breakfast')"><span class="oe">🌅</span>Breakfast<span style="font-size:11px;color:#888">ناشتہ</span></button>
+      <button class="msopt" onclick="openFS('lunch')"><span class="oe">☀️</span>Lunch<span style="font-size:11px;color:#888">دوپہر</span></button>
+      <button class="msopt" onclick="openFS('dinner')"><span class="oe">🌙</span>Dinner<span style="font-size:11px;color:#888">رات</span></button>
+      <button class="msopt" onclick="openFS('snack')"><span class="oe">🍿</span>Snack<span style="font-size:11px;color:#888">اسنیک</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const FD=[
+  // PAKISTANI 🇵🇰
+  {id:'pk1',n:'Biryani (Mutton)',u:'مٹن بریانی',e:'🍛',cal:520,p:28,c:58,f:18,s:'1 plate 300g',cat:'🇵🇰 Pakistani'},
+  {id:'pk2',n:'Biryani (Chicken)',u:'چکن بریانی',e:'🍚',cal:450,p:25,c:55,f:15,s:'1 plate 300g',cat:'🇵🇰 Pakistani'},
+  {id:'pk3',n:'Nihari',u:'نہاری',e:'🥘',cal:380,p:32,c:12,f:24,s:'1 bowl 250g',cat:'🇵🇰 Pakistani'},
+  {id:'pk4',n:'Halwa Puri',u:'حلوہ پوری',e:'🫓',cal:650,p:10,c:82,f:30,s:'1 set',cat:'🇵🇰 Pakistani'},
+  {id:'pk5',n:'Paratha (Plain)',u:'سادہ پراٹھہ',e:'🫓',cal:260,p:5,c:38,f:10,s:'1 paratha',cat:'🇵🇰 Pakistani'},
+  {id:'pk6',n:'Paratha (Aloo)',u:'آلو پراٹھہ',e:'🥔',cal:320,p:7,c:48,f:12,s:'1 paratha',cat:'🇵🇰 Pakistani'},
+  {id:'pk7',n:'Samosa',u:'سموسہ',e:'🔺',cal:130,p:4,c:18,f:6,s:'1 piece',cat:'🇵🇰 Pakistani'},
+  {id:'pk8',n:'Pakora',u:'پکوڑا',e:'🟤',cal:60,p:2,c:7,f:3,s:'1 piece',cat:'🇵🇰 Pakistani'},
+  {id:'pk9',n:'Naan',u:'نان',e:'🫓',cal:280,p:9,c:52,f:5,s:'1 naan',cat:'🇵🇰 Pakistani'},
+  {id:'pk10',n:'Chapati / Roti',u:'چپاتی / روٹی',e:'🫓',cal:120,p:4,c:22,f:2,s:'1 roti',cat:'🇵🇰 Pakistani'},
+  {id:'pk11',n:'Daal Chawal',u:'دال چاول',e:'🍲',cal:380,p:14,c:68,f:8,s:'1 plate',cat:'🇵🇰 Pakistani'},
+  {id:'pk12',n:'Chicken Karahi',u:'چکن کڑاہی',e:'🍗',cal:420,p:35,c:8,f:28,s:'200g',cat:'🇵🇰 Pakistani'},
+  {id:'pk13',n:'Mutton Karahi',u:'مٹن کڑاہی',e:'🥩',cal:480,p:38,c:6,f:32,s:'200g',cat:'🇵🇰 Pakistani'},
+  {id:'pk14',n:'Seekh Kebab',u:'سیخ کباب',e:'🍢',cal:165,p:18,c:4,f:9,s:'2 pieces',cat:'🇵🇰 Pakistani'},
+  {id:'pk15',n:'Chapli Kebab',u:'چپلی کباب',e:'🥩',cal:210,p:20,c:6,f:12,s:'1 piece',cat:'🇵🇰 Pakistani'},
+  {id:'pk16',n:'Paye',u:'پائے',e:'🦴',cal:290,p:28,c:5,f:18,s:'1 bowl',cat:'🇵🇰 Pakistani'},
+  {id:'pk17',n:'Aloo Gosht',u:'آلو گوشت',e:'🥘',cal:350,p:22,c:28,f:16,s:'1 bowl',cat:'🇵🇰 Pakistani'},
+  {id:'pk18',n:'Pulao',u:'پلاؤ',e:'🍚',cal:420,p:18,c:62,f:12,s:'1 plate',cat:'🇵🇰 Pakistani'},
+  {id:'pk19',n:'Chicken Tikka',u:'چکن ٹکہ',e:'🍖',cal:240,p:28,c:4,f:13,s:'2 pieces',cat:'🇵🇰 Pakistani'},
+  {id:'pk20',n:'Bun Kebab',u:'بن کباب',e:'🍔',cal:280,p:14,c:30,f:12,s:'1 piece',cat:'🇵🇰 Pakistani'},
+  {id:'pk21',n:'Doodh Seviyan',u:'دودھ سویاں',e:'🍜',cal:310,p:8,c:52,f:9,s:'1 bowl',cat:'🇵🇰 Pakistani'},
+  // KFC 🍗
+  {id:'kfc1',n:'Zinger Burger',u:'زنگر برگر',e:'🍔',cal:540,p:28,c:52,f:23,s:'1 burger',cat:'🍗 KFC'},
+  {id:'kfc2',n:'Zinger Box Meal',u:'زنگر باکس میل',e:'📦',cal:970,p:40,c:98,f:42,s:'1 meal',cat:'🍗 KFC'},
+  {id:'kfc3',n:'Original Chicken (1pc)',u:'اوریجنل چکن',e:'🍗',cal:320,p:25,c:12,f:20,s:'1 piece',cat:'🍗 KFC'},
+  {id:'kfc4',n:'Hot Wings (3pcs)',u:'ہاٹ ونگز',e:'🔥',cal:290,p:18,c:14,f:18,s:'3 pieces',cat:'🍗 KFC'},
+  {id:'kfc5',n:'Crispy Strips (3pcs)',u:'کریسپی سٹرپس',e:'🍗',cal:350,p:22,c:22,f:18,s:'3 pieces',cat:'🍗 KFC'},
+  {id:'kfc6',n:'French Fries Regular',u:'فرنچ فرائز',e:'🍟',cal:320,p:4,c:44,f:15,s:'1 regular',cat:'🍗 KFC'},
+  {id:'kfc7',n:'French Fries Large',u:'لارج فرائز',e:'🍟',cal:470,p:6,c:65,f:22,s:'1 large',cat:'🍗 KFC'},
+  {id:'kfc8',n:'Twister Wrap',u:'ٹوسٹر ریپ',e:'🌯',cal:490,p:24,c:48,f:22,s:'1 wrap',cat:'🍗 KFC'},
+  {id:'kfc9',n:'KFC Bucket (6pcs)',u:'کے ایف سی بکٹ',e:'🪣',cal:1920,p:150,c:72,f:120,s:'6 pieces',cat:'🍗 KFC'},
+  {id:'kfc10',n:'Chicken Rice Bowl',u:'چکن رائس باؤل',e:'🍱',cal:580,p:28,c:72,f:18,s:'1 bowl',cat:'🍗 KFC'},
+  // McDONALD'S 🍔
+  {id:'mc1',n:'Big Mac',u:'بگ میک',e:'🍔',cal:550,p:25,c:46,f:30,s:'1 burger',cat:"🍔 McDonald's"},
+  {id:'mc2',n:'McSpicy Burger',u:'میک اسپائسی',e:'🌶️',cal:480,p:24,c:44,f:22,s:'1 burger',cat:"🍔 McDonald's"},
+  {id:'mc3',n:'McChicken Burger',u:'میک چکن',e:'🍔',cal:400,p:22,c:40,f:17,s:'1 burger',cat:"🍔 McDonald's"},
+  {id:'mc4',n:'Double Beef Burger',u:'ڈبل بیف برگر',e:'🍔',cal:620,p:35,c:42,f:35,s:'1 burger',cat:"🍔 McDonald's"},
+  {id:'mc5',n:'McFries Medium',u:'میک فرائز',e:'🍟',cal:340,p:4,c:44,f:16,s:'1 medium',cat:"🍔 McDonald's"},
+  {id:'mc6',n:'McFries Large',u:'لارج میک فرائز',e:'🍟',cal:490,p:6,c:66,f:23,s:'1 large',cat:"🍔 McDonald's"},
+  {id:'mc7',n:'McFlurry Oreo',u:'میک فلری اوریو',e:'🍦',cal:510,p:12,c:80,f:17,s:'1 cup',cat:"🍔 McDonald's"},
+  {id:'mc8',n:'Chicken McNuggets (6)',u:'چکن نگٹس',e:'🍗',cal:280,p:15,c:17,f:17,s:'6 pieces',cat:"🍔 McDonald's"},
+  {id:'mc9',n:'Apple Pie',u:'ایپل پائی',e:'🥧',cal:260,p:3,c:36,f:13,s:'1 piece',cat:"🍔 McDonald's"},
+  {id:'mc10',n:'Happy Meal Chicken',u:'ہیپی میل',e:'😊',cal:560,p:22,c:70,f:20,s:'1 meal',cat:"🍔 McDonald's"},
+  // SUBWAY 🥖
+  {id:'s1',n:'Chicken Teriyaki 6"',u:'چکن تیریاکی',e:'🥖',cal:370,p:26,c:48,f:8,s:'6 inch',cat:'🥖 Subway'},
+  {id:'s2',n:'Chicken Teriyaki Footlong',u:'چکن فٹ لانگ',e:'🥖',cal:740,p:52,c:96,f:16,s:'12 inch',cat:'🥖 Subway'},
+  {id:'s3',n:'Spicy Italian 6"',u:'اسپائسی اٹالین',e:'🌶️',cal:480,p:20,c:44,f:24,s:'6 inch',cat:'🥖 Subway'},
+  {id:'s4',n:'Tuna Sub 6"',u:'ٹونا سب',e:'🐟',cal:480,p:24,c:44,f:22,s:'6 inch',cat:'🥖 Subway'},
+  {id:'s5',n:'Veggie Delight 6"',u:'ویجی ڈیلائٹ',e:'🥗',cal:230,p:9,c:44,f:3,s:'6 inch',cat:'🥖 Subway'},
+  {id:'s6',n:'BMT 6"',u:'بی ایم ٹی',e:'🥖',cal:450,p:22,c:44,f:20,s:'6 inch',cat:'🥖 Subway'},
+  {id:'s7',n:'Meatball Marinara 6"',u:'میٹ بال مرینارا',e:'🧆',cal:480,p:23,c:58,f:18,s:'6 inch',cat:'🥖 Subway'},
+  {id:'s8',n:'Subway Cookies',u:'سب وے کوکیز',e:'🍪',cal:210,p:2,c:30,f:10,s:'1 cookie',cat:'🥖 Subway'},
+  // COLD DRINKS 🥤
+  {id:'cd1',n:'Pepsi Can',u:'پیپسی',e:'🥤',cal:150,p:0,c:41,f:0,s:'355ml can',cat:'🥤 Cold Drinks'},
+  {id:'cd2',n:'Coca-Cola Can',u:'کوکا کولا',e:'🥤',cal:140,p:0,c:39,f:0,s:'355ml can',cat:'🥤 Cold Drinks'},
+  {id:'cd3',n:'7UP',u:'7 اپ',e:'🟢',cal:140,p:0,c:38,f:0,s:'355ml can',cat:'🥤 Cold Drinks'},
+  {id:'cd4',n:'Sprite',u:'اسپرائٹ',e:'🫧',cal:140,p:0,c:38,f:0,s:'355ml can',cat:'🥤 Cold Drinks'},
+  {id:'cd5',n:'Mountain Dew',u:'ماؤنٹین ڈیو',e:'💚',cal:170,p:0,c:46,f:0,s:'355ml can',cat:'🥤 Cold Drinks'},
+  {id:'cd6',n:'Fanta Orange',u:'فانٹا',e:'🍊',cal:160,p:0,c:44,f:0,s:'355ml can',cat:'🥤 Cold Drinks'},
+  {id:'cd7',n:'Rooh Afza',u:'روح افزا',e:'🌹',cal:160,p:4,c:32,f:3,s:'250ml',cat:'🥤 Cold Drinks'},
+  {id:'cd8',n:'Mango Juice',u:'آم کا جوس',e:'🥭',cal:130,p:1,c:32,f:0,s:'250ml',cat:'🥤 Cold Drinks'},
+  {id:'cd9',n:'Lassi (Sweet)',u:'میٹھی لسی',e:'🥛',cal:240,p:8,c:40,f:6,s:'350ml',cat:'🥤 Cold Drinks'},
+  {id:'cd10',n:'Sugarcane Juice',u:'گنے کا رس',e:'🌿',cal:180,p:0,c:45,f:0,s:'250ml',cat:'🥤 Cold Drinks'},
+  {id:'cd11',n:'Pakola',u:'پاکولا',e:'💚',cal:145,p:0,c:38,f:0,s:'355ml can',cat:'🥤 Cold Drinks'},
+  {id:'cd12',n:'Pepsi Diet',u:'ڈائیٹ پیپسی',e:'🥤',cal:0,p:0,c:0,f:0,s:'355ml can',cat:'🥤 Cold Drinks'},
+  // TEA & COFFEE ☕
+  {id:'tc1',n:'Pakistani Chai',u:'پاکستانی چائے',e:'🍵',cal:90,p:3,c:14,f:3,s:'1 cup 200ml',cat:'☕ Tea & Coffee'},
+  {id:'tc2',n:'Doodh Pati Chai',u:'دودھ پتی',e:'🍵',cal:130,p:5,c:16,f:6,s:'1 cup 200ml',cat:'☕ Tea & Coffee'},
+  {id:'tc3',n:'Green Tea',u:'گرین ٹی',e:'🍃',cal:2,p:0,c:0,f:0,s:'1 cup 200ml',cat:'☕ Tea & Coffee'},
+  {id:'tc4',n:'Kashmiri Chai',u:'کشمیری چائے',e:'🩷',cal:150,p:5,c:18,f:7,s:'1 cup 200ml',cat:'☕ Tea & Coffee'},
+  {id:'tc5',n:'Black Coffee',u:'بلیک کافی',e:'☕',cal:5,p:0,c:0,f:0,s:'1 cup 200ml',cat:'☕ Tea & Coffee'},
+  {id:'tc6',n:'Coffee with Milk',u:'دودھ والی کافی',e:'☕',cal:90,p:3,c:12,f:4,s:'1 cup 200ml',cat:'☕ Tea & Coffee'},
+  {id:'tc7',n:'Latte',u:'لاٹے',e:'☕',cal:190,p:10,c:18,f:8,s:'350ml',cat:'☕ Tea & Coffee'},
+  {id:'tc8',n:'Cappuccino',u:'کیپوچینو',e:'☕',cal:120,p:6,c:12,f:5,s:'300ml',cat:'☕ Tea & Coffee'},
+  {id:'tc9',n:'Frappuccino Mocha',u:'فراپوچینو',e:'🧋',cal:380,p:5,c:60,f:14,s:'450ml',cat:'☕ Tea & Coffee'},
+  {id:'tc10',n:'Iced Coffee',u:'آئسڈ کافی',e:'🧊',cal:140,p:3,c:28,f:2,s:'350ml',cat:'☕ Tea & Coffee'},
+  {id:'tc11',n:'Bubble Tea',u:'ببل ٹی',e:'🧋',cal:300,p:2,c:55,f:8,s:'450ml',cat:'☕ Tea & Coffee'},
+  // SNACKS 🍿
+  {id:'sn1',n:'Gol Gappa / Pani Puri',u:'گول گپے',e:'🫙',cal:180,p:4,c:32,f:5,s:'6 pieces',cat:'🍿 Snacks'},
+  {id:'sn2',n:'Dahi Bhalla',u:'دہی بھلہ',e:'🥣',cal:220,p:8,c:35,f:6,s:'1 plate',cat:'🍿 Snacks'},
+  {id:'sn3',n:'Chaat',u:'چاٹ',e:'🫙',cal:200,p:6,c:38,f:4,s:'1 plate',cat:'🍿 Snacks'},
+  {id:'sn4',n:'Shawarma',u:'شوارمہ',e:'🌯',cal:430,p:24,c:46,f:18,s:'1 roll',cat:'🍿 Snacks'},
+  {id:'sn5',n:'Pizza (1 slice)',u:'پیزا',e:'🍕',cal:285,p:12,c:36,f:10,s:'1 slice',cat:'🍿 Snacks'},
+  {id:'sn6',n:'Chips Lays',u:'چپس',e:'🥔',cal:150,p:2,c:15,f:10,s:'1 bag 28g',cat:'🍿 Snacks'},
+  {id:'sn7',n:'Corn Boiled',u:'ابلی مکئی',e:'🌽',cal:130,p:4,c:28,f:2,s:'1 cob',cat:'🍿 Snacks'},
+  // DESSERTS 🍮
+  {id:'ds1',n:'Gulab Jamun (2pcs)',u:'گلاب جامن',e:'🟤',cal:270,p:4,c:50,f:8,s:'2 pieces',cat:'🍮 Desserts'},
+  {id:'ds2',n:'Kheer',u:'کھیر',e:'🍮',cal:230,p:6,c:40,f:6,s:'1 bowl',cat:'🍮 Desserts'},
+  {id:'ds3',n:'Jalebi',u:'جلیبی',e:'🌀',cal:150,p:2,c:34,f:2,s:'2 pieces',cat:'🍮 Desserts'},
+  {id:'ds4',n:'Barfi',u:'برفی',e:'🍬',cal:160,p:4,c:28,f:5,s:'1 piece',cat:'🍮 Desserts'},
+  {id:'ds5',n:'Kulfi',u:'کلفی',e:'🍦',cal:180,p:5,c:24,f:8,s:'1 piece',cat:'🍮 Desserts'},
+];
+const MEALS=[{k:'breakfast',l:'Breakfast',u:'ناشتہ',e:'🌅'},{k:'lunch',l:'Lunch',u:'دوپہر',e:'☀️'},{k:'dinner',l:'Dinner',u:'رات کا کھانا',e:'🌙'},{k:'snack',l:'Snacks',u:'اسنیکس',e:'🍿'}];
+const ACTS=[{k:'sedentary',l:'Sedentary',u:'بالکل سست',m:1.2,e:'🛋️'},{k:'light',l:'Lightly Active',u:'تھوڑا فعال',m:1.375,e:'🚶'},{k:'moderate',l:'Moderately Active',u:'درمیانہ فعال',m:1.55,e:'🏃'},{k:'active',l:'Very Active',u:'بہت فعال',m:1.725,e:'🏋️'},{k:'veryActive',l:'Extremely Active',u:'انتہائی فعال',m:1.9,e:'⚡'}];
+const BMIRS=[{mn:0,mx:16,l:'Severely Underweight',u:'بہت کم وزن',c:'#1565C0',e:'⚠️'},{mn:16,mx:18.5,l:'Underweight',u:'کم وزن',c:'#2196F3',e:'📉'},{mn:18.5,mx:25,l:'Normal / Healthy',u:'نارمل - صحت مند',c:'#4CAF50',e:'✅'},{mn:25,mx:30,l:'Overweight',u:'زیادہ وزن',c:'#FF9800',e:'⚡'},{mn:30,mx:35,l:'Obese Class I',u:'موٹاپا - درجہ ۱',c:'#FF5722',e:'⚠️'},{mn:35,mx:40,l:'Obese Class II',u:'موٹاپا - درجہ ۲',c:'#E53935',e:'🚨'},{mn:40,mx:999,l:'Obese Class III',u:'موٹاپا - درجہ ۳',c:'#B71C1C',e:'🆘'}];
+
+let ST={logs:{},prof:{w:70,h:170,age:25,g:'male',act:'moderate',goal:'maintain'},water:0,steps:0,hc:false};
+const TD=new Date().toISOString().split('T')[0];
+let CF=null,CSV=1,CMT='lunch',SCAT=null;
+let SG='male',SA='moderate',SGL='maintain';
+
+function LS(){try{const s=localStorage.getItem('ct');if(s)ST={...ST,...JSON.parse(s)};}catch(e){}}
+function SS(){try{localStorage.setItem('ct',JSON.stringify(ST));}catch(e){}}
+function gCal(){return(ST.logs[TD]||[]).reduce((s,e)=>s+e.cal,0);}
+function gMac(){return(ST.logs[TD]||[]).reduce((a,e)=>({p:a.p+e.p,c:a.c+e.c,f:a.f+e.f}),{p:0,c:0,f:0});}
+function gGoal(){const{w,h,age,g,act,goal}=ST.prof;let b=g==='male'?10*w+6.25*h-5*age+5:10*w+6.25*h-5*age-161;const m={sedentary:1.2,light:1.375,moderate:1.55,active:1.725,veryActive:1.9};let t=b*(m[act]||1.55);if(goal==='lose')t-=500;else if(goal==='gain')t+=500;return Math.round(t);}
+function gCC(c){if(c<100)return'#4CAF50';if(c<300)return'#8BC34A';if(c<500)return'#FF9800';if(c<700)return'#FF5722';return'#F44336';}
+
+function rHome(){
+  const cal=gCal(),goal=gGoal(),rem=goal-cal,prog=Math.min(cal/goal,1);
+  const mac=gMac(),col=prog>=1?'#FF5722':prog>=0.8?'#FF9800':'#4CAF50';
+  document.getElementById('dt').textContent=new Date().toLocaleDateString('en-PK',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('rn').textContent=cal;document.getElementById('rn').style.color=col;
+  document.getElementById('ring').style.borderColor=col;
+  document.getElementById('pf').style.cssText=`width:${prog*100}%;background:${col}`;
+  document.getElementById('gv').textContent=goal;
+  document.getElementById('rv').textContent=Math.abs(rem);document.getElementById('rv').style.color=rem<0?'#FF5722':'#fff';
+  document.getElementById('rl').textContent=rem>=0?'✅ باقی':'⚠️ زیادہ';
+  document.getElementById('bv').textContent=Math.round(ST.steps*0.04);
+  document.getElementById('wv').textContent=ST.water;
+  document.getElementById('stv').textContent=ST.steps.toLocaleString();
+  document.getElementById('stf').style.width=Math.min(ST.steps/10000*100,100)+'%';
+  document.getElementById('pv').textContent=mac.p+'g';document.getElementById('cv2').textContent=mac.c+'g';document.getElementById('fv2').textContent=mac.f+'g';
+  document.getElementById('pb').style.width=Math.min(mac.p/150*100,100)+'%';
+  document.getElementById('cb2').style.width=Math.min(mac.c/300*100,100)+'%';
+  document.getElementById('fb').style.width=Math.min(mac.f/80*100,100)+'%';
+  rMeals();
+}
+function rMeals(){
+  const logs=ST.logs[TD]||[];let h='';
+  MEALS.forEach(m=>{
+    const ents=logs.filter(e=>e.meal===m.k),mc=ents.reduce((s,e)=>s+e.cal,0);
+    h+=`<div class="mcard"><div class="mhdr"><div><div class="mtitle">${m.e} ${m.l}</div><div style="font-size:11px;color:#aaa">${m.u}</div></div><div style="display:flex;align-items:center;gap:8px"><span class="mcal">${mc} cal</span><button class="abtn" onclick="openFS('${m.k}')">+ Add</button></div></div>`;
+    if(!ents.length){h+=`<div class="emeal" onclick="openFS('${m.k}')">${m.e} کھانا شامل کریں / Tap to add food</div>`;}
+    else{ents.forEach(e=>{h+=`<div class="fentry"><span class="fee">${e.e}</span><div class="fei"><div class="fen">${e.n}</div><div class="fes">${e.srv}x ${e.s}</div></div><span class="fec">${e.cal}</span><button class="dbtn" onclick="rmE('${e.id}')">✕</button></div>`;});}
+    h+='</div>';
+  });
+  document.getElementById('meals').innerHTML=h;
+}
+function rmE(id){ST.logs[TD]=(ST.logs[TD]||[]).filter(e=>e.id!==id);SS();rHome();}
+function cW(n){ST.water=Math.max(0,ST.water+n);SS();rHome();}
+
+function openMS(){document.getElementById('mso').classList.add('show');}
+function openFS(mt){
+  CMT=mt;document.getElementById('mso').classList.remove('show');
+  const lb={breakfast:'🌅 Breakfast - ناشتہ',lunch:'☀️ Lunch - دوپہر',dinner:'🌙 Dinner - رات',snack:'🍿 Snack'};
+  document.getElementById('sml').textContent='Adding to: '+(lb[mt]||mt);
+  go('food');rCats();ff();
+}
+function rCats(){
+  const cats=[...new Set(FD.map(f=>f.cat))];
+  let h=`<div class="cchip ${!SCAT?'active':''}" onclick="sC(null)">🌍 All</div>`;
+  cats.forEach(c=>{h+=`<div class="cchip ${SCAT===c?'active':''}" onclick="sC('${c.replace(/'/g,"\\'")}'">${c}</div>`;});
+  document.getElementById('cs').innerHTML=h;
+}
+function sC(c){SCAT=c;rCats();ff();}
+function ff(){
+  const q=document.getElementById('si2').value.toLowerCase();
+  let res=FD.filter(f=>(!q||f.n.toLowerCase().includes(q)||f.u.includes(q)||f.cat.toLowerCase().includes(q))&&(!SCAT||f.cat===SCAT));
+  document.getElementById('rc').textContent=res.length+' items ملے / found';
+  let h='';
+  res.forEach(f=>{
+    h+=`<div class="fcard" onclick="oFM('${f.id}')"><span class="fce">${f.e}</span><div class="fcm"><div class="fcn">${f.n}</div><div class="fcu">${f.u}</div><div class="fcsrv">${f.s}</div><div class="fcmac"><span class="mt">🥩${f.p}g</span><span class="mt">🌾${f.c}g</span><span class="mt">🫒${f.f}g</span></div></div><div class="fcr"><div class="cbadge" style="background:${gCC(f.cal)}"><span class="cn">${f.cal}</span><span class="ct">cal</span></div><button class="fcadd" onclick="event.stopPropagation();oFM('${f.id}')">+</button></div></div>`;
+  });
+  document.getElementById('fl').innerHTML=h||'<div style="text-align:center;padding:40px;color:#aaa"><div style="font-size:48px">🤔</div><div style="margin-top:12px">کوئی کھانا نہیں ملا</div></div>';
+}
+function cx(){document.getElementById('si2').value='';ff();}
+
+function oFM(id){CF=FD.find(f=>f.id===id);CSV=1;if(!CF)return;uM();document.getElementById('fm').classList.add('show');}
+function uM(){
+  const f=CF,s=CSV;
+  document.getElementById('me').textContent=f.e;document.getElementById('mnn').textContent=f.n;
+  document.getElementById('mu').textContent=f.u;document.getElementById('mss').textContent='Per serving: '+f.s;
+  document.getElementById('mc').textContent=Math.round(f.cal*s);document.getElementById('mp').textContent=Math.round(f.p*s)+'g';
+  document.getElementById('mcb').textContent=Math.round(f.c*s)+'g';document.getElementById('mf').textContent=Math.round(f.f*s)+'g';
+  document.getElementById('sv2').textContent=s;
+}
+function cS(n){CSV=Math.max(0.5,CSV+n);uM();}
+function cM(){document.getElementById('fm').classList.remove('show');}
+function confAdd(){
+  if(!CF)return;
+  const e={id:Date.now().toString(),meal:CMT,n:CF.n,e:CF.e,s:CF.s,srv:CSV,cal:Math.round(CF.cal*CSV),p:Math.round(CF.p*CSV),c:Math.round(CF.c*CSV),f:Math.round(CF.f*CSV)};
+  if(!ST.logs[TD])ST.logs[TD]=[];ST.logs[TD].push(e);SS();cM();
+  toast(`✅ ${CF.e} ${CF.n} - ${e.cal} cal`);
+  setTimeout(()=>{go('home');rHome();},300);
+}
+
+// BMI
+function rBMIForm(){
+  let ah='';ACTS.forEach(a=>{ah+=`<div class="actbtn ${SA===a.k?'active':''}" onclick="sA('${a.k}')"><span class="ae">${a.e}</span><div class="ai"><div class="al">${a.l}</div><div class="au">${a.u}</div></div>${SA===a.k?'<span>✅</span>':''}</div>`;});
+  document.getElementById('abtns').innerHTML=ah;
+  const gs=[{k:'lose',l:'Lose Weight',u:'وزن کم',e:'📉'},{k:'maintain',l:'Maintain',u:'برقرار',e:'⚖️'},{k:'gain',l:'Gain Weight',u:'وزن بڑھاؤ',e:'📈'}];
+  let gh='';gs.forEach(g=>{gh+=`<div class="glbtn ${SGL===g.k?'active':''}" onclick="sGL('${g.k}')"><span class="ge3">${g.e}</span><div class="gl3">${g.l}</div><div class="gu">${g.u}</div></div>`;});
+  document.getElementById('gbtns').innerHTML=gh;
+}
+function sg(g){SG=g;document.getElementById('gm').classList.toggle('active',g==='male');document.getElementById('gf').classList.toggle('active',g==='female');}
+function sA(a){SA=a;rBMIForm();}
+function sGL(g){SGL=g;rBMIForm();}
+function calcBMI(){
+  const w=parseFloat(document.getElementById('bw').value)||70;
+  const h=parseFloat(document.getElementById('bh').value)||170;
+  const age=parseInt(document.getElementById('ba').value)||25;
+  ST.prof={w,h,age,g:SG,act:SA,goal:SGL};SS();
+  const hm=h/100,bmi=+(w/(hm*hm)).toFixed(1);
+  const rng=BMIRS.find(r=>bmi>=r.mn&&bmi<r.mx)||BMIRS[0];
+  let bmr=SG==='male'?10*w+6.25*h-5*age+5:10*w+6.25*h-5*age-161;
+  const act=ACTS.find(x=>x.k===SA);const tdee=bmr*(act?.m||1.55);
+  const cs={lose:Math.round(tdee-500),mn:Math.round(tdee),gain:Math.round(tdee+500),la:Math.round(tdee-1000)};
+  const iMin=(18.5*hm*hm).toFixed(1),iMax=(24.9*hm*hm).toFixed(1);
+  let sh='';BMIRS.slice(0,6).forEach(r=>{const isMe=rng.l===r.l;sh+=`<div class="scrow ${isMe?'hl':''}"><div class="scdot" style="background:${r.c}"></div><div class="scinfo"><div class="sclbl">${r.l}</div><div class="scurdu">${r.u}</div></div><span class="scr">${r.mn}-${r.mx===999?'40+':r.mx}</span>${isMe?'<span class="scyou">← آپ</span>':''}</div>`;});
+  let adv='';if(w<parseFloat(iMin))adv=`<div class="wadv">📈 آپ کو ${(parseFloat(iMin)-w).toFixed(1)}kg وزن بڑھانا چاہیے</div>`;
+  else if(w>parseFloat(iMax))adv=`<div class="wadv">📉 آپ کو ${(w-parseFloat(iMax)).toFixed(1)}kg وزن کم کرنا چاہیے</div>`;
+  const recos=[{e:'🔥',l:'Weight Loss (Fast)',u:'تیز وزن کم',v:cs.la,c:'#E53935'},{e:'📉',l:'Weight Loss',u:'وزن کم کریں',v:cs.lose,c:'#FF9800'},{e:'⚖️',l:'Maintain Weight',u:'وزن برقرار',v:cs.mn,c:'#4CAF50'},{e:'📈',l:'Weight Gain',u:'وزن بڑھائیں',v:cs.gain,c:'#2196F3'}];
+  document.getElementById('br').innerHTML=`
+    <div class="rcard" style="border-top:4px solid ${rng.c}"><div style="font-size:48px">${rng.e}</div><div class="bbig" style="color:${rng.c}">${bmi}</div><div class="blbl">BMI</div><div class="cbadge2" style="background:${rng.c}">${rng.l}</div><div class="curdu">${rng.u}</div></div>
+    <div class="sccard"><div class="sctitle">BMI پیمانہ</div>${sh}</div>
+    <div class="idcard"><div class="idtitle">⚖️ آپ کا مثالی وزن</div><div class="idsub">Your Ideal Weight Range</div><div class="idval">${iMin}kg — ${iMax}kg</div><div style="font-size:12px;color:#aaa;margin-top:4px">Height: ${h}cm</div>${adv}</div>
+    <div class="crcard"><div class="crtitle">🍽️ روزانہ کیلوری تجویز</div>${recos.map(r=>`<div class="crrow"><span class="crre">${r.e}</span><div class="crinfo"><div class="crlbl">${r.l}</div><div class="crurdu">${r.u}</div></div><span class="crval" style="color:${r.c}">${r.v}</span></div>`).join('')}</div>`;
+  document.getElementById('br').scrollIntoView({behavior:'smooth',block:'start'});rHome();
+}
+
+// PROFILE
+function rProfile(){
+  const{w,h,age,g}=ST.prof,goal=gGoal(),tc=gCal();
+  const bv=+(w/((h/100)**2)).toFixed(1),rng=BMIRS.find(r=>bv>=r.mn&&bv<r.mx)||BMIRS[0];
+  document.getElementById('avt').textContent=g==='female'?'👩':'👨';
+  document.getElementById('pi').textContent=`${age} سال | ${w} kg | ${h} cm`;
+  document.getElementById('psg').innerHTML=`
+    <div class="scard2" style="border-top-color:#4CAF50"><div class="sce">🔥</div><div class="scv">${tc}</div><div class="scl2">آج کی Cal</div><div class="scs">/ ${goal} goal</div></div>
+    <div class="scard2" style="border-top-color:${rng.c}"><div class="sce">⚖️</div><div class="scv" style="color:${rng.c}">${bv}</div><div class="scl2">BMI</div><div class="scs">${rng.u}</div></div>
+    <div class="scard2" style="border-top-color:#FF9800"><div class="sce">👟</div><div class="scv">${ST.steps.toLocaleString()}</div><div class="scl2">قدم / Steps</div><div class="scs">/ 10,000 goal</div></div>
+    <div class="scard2" style="border-top-color:#9C27B0"><div class="sce">📅</div><div class="scv">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].reduce((cnt,_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));return cnt+((ST.logs[d.toISOString().split('T')[0]]||[]).length>0?1:0);},0)}</div><div class="scl2">Streak Days</div><div class="scs">اس ہفتے</div></div>`;
+  const fs=[{e:'👟',t:'Steps Tracking',u:'قدم گننا'},{e:'❤️',t:'Heart Rate',u:'دل کی دھڑکن'},{e:'🔥',t:'Calories Burned',u:'جلی کیلوریز'},{e:'😴',t:'Sleep Tracking',u:'نیند کی نگرانی'}];
+  document.getElementById('hfs').innerHTML=fs.map(f=>`<div class="hfi"><span class="hfe">${f.e}</span><div><div class="hfl">${f.t}</div><div class="hfu">${f.u}</div></div><span class="hck" style="margin-left:auto">${ST.hc?'✅':'○'}</span></div>`).join('');
+  document.getElementById('hd').className='hdot'+(ST.hc?' on':'');
+  document.getElementById('hs').textContent=ST.hc?'✅ Connected - Data sync ہو رہا ہے':'Health app سے steps اور data sync کریں';
+  document.getElementById('conb').textContent=ST.hc?'🔄 Reconnect':'📱 Health Connect کریں';
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],wd=[];
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=d.toISOString().split('T')[0];wd.push({cal:(ST.logs[k]||[]).reduce((s,e)=>s+e.cal,0),day:days[(d.getDay()+6)%7],isT:i===0});}
+  const mx=Math.max(...wd.map(d=>d.cal),goal,1);
+  document.getElementById('wc').innerHTML=wd.map(d=>{const h2=d.cal>0?Math.max((d.cal/mx)*100,4):4;const col=d.cal>goal?'#FF5722':d.isT?'#4CAF50':'#1a1a2e';return`<div class="bcol"><div class="bnum">${d.cal>0?d.cal:''}</div><div class="bwrap"><div class="bar2" style="height:${h2}px;background:${col}"></div></div><div class="bday ${d.isT?'btoday':''}">${d.day}</div>${d.isT?'<div class="btlbl">آج</div>':''}</div>`;}).join('');
+  document.getElementById('tl').innerHTML=[{e:'🥗',t:'ہر کھانے میں سبزیاں شامل کریں',en:'Include vegetables in every meal'},{e:'💧',t:'روزانہ 8 گلاس پانی پیئیں',en:'Drink 8 glasses of water daily'},{e:'🚶',t:'روزانہ 10,000 قدم چلیں',en:'Walk 10,000 steps daily'},{e:'😴',t:'رات کو 7-8 گھنٹے سوئیں',en:'Sleep 7-8 hours per night'},{e:'🍽️',t:'دن میں 3 بار کھانا کھائیں',en:'Eat 3 balanced meals daily'},{e:'🧁',t:'میٹھی چیزیں کم کھائیں',en:'Reduce sugary food intake'}].map(t=>`<div class="ti"><span class="tie">${t.e}</span><div class="tit"><div class="tit1">${t.t}</div><div class="tit2">${t.en}</div></div></div>`).join('');
+}
+function conH(){toast('⏳ Connecting...');setTimeout(()=>{ST.hc=true;ST.steps=Math.floor(Math.random()*5000)+3000;SS();rProfile();rHome();toast('✅ Health app سے connection ہو گئی!');},1500);}
+
+// NAV
+function go(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sc-'+n).classList.add('active');
+  const nb=document.getElementById('n-'+n);if(nb)nb.classList.add('active');
+  else document.getElementById('n-food').classList.add('active');
+  if(n==='home')rHome();else if(n==='bmi')rBMIForm();else if(n==='profile')rProfile();
+  window.scrollTo(0,0);
+}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+// INIT
+LS();
+SG=ST.prof.g||'male';SA=ST.prof.act||'moderate';SGL=ST.prof.goal||'maintain';
+document.getElementById('bw').value=ST.prof.w||70;document.getElementById('bh').value=ST.prof.h||170;document.getElementById('ba').value=ST.prof.age||25;
+sg(SG);rHome();
+</script>
+</body>
+</html>
