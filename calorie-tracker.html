@@ -231,6 +231,24 @@ input[type=number]:focus{border-color:#1a1a2e}
 .tit{flex:1}
 .tit1{font-size:13px;color:#333;font-weight:500}
 .tit2{font-size:11px;color:#aaa;margin-top:2px}
+/* MONTHLY SUMMARY */
+.mthcard{background:#fff;margin:12px 14px;border-radius:16px;padding:15px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.mthtitle{font-size:15px;font-weight:700;text-align:center;color:#1a1a2e}
+.mthsub{font-size:12px;color:#aaa;text-align:center;margin-bottom:12px}
+.mth-stats{display:flex;justify-content:space-around;background:#f9f9f9;border-radius:12px;padding:10px;margin-bottom:14px}
+.mths{text-align:center}
+.mthsv{font-size:17px;font-weight:800;color:#1a1a2e}
+.mthsl{font-size:10px;color:#888;margin-top:2px}
+.cal-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px}
+.cal-dh{text-align:center;font-size:10px;font-weight:700;color:#888;padding:3px 0}
+.cal-grid2{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-day{border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 2px;cursor:pointer;min-height:42px}
+.cal-dn{font-size:12px;font-weight:700;line-height:1}
+.cal-dc{font-size:8px;margin-top:2px;line-height:1}
+.cal-empty{min-height:42px}
+.mth-leg{display:flex;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.mth-li{display:flex;align-items:center;gap:4px;font-size:10px;color:#666}
+.mth-ld{width:10px;height:10px;border-radius:3px}
 /* TOAST */
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:90%}
 .toast.show{opacity:1}
@@ -335,6 +353,24 @@ input[type=number]:focus{border-color:#1a1a2e}
       <div class="cli"><div class="cld" style="background:#4CAF50"></div><span class="clt">آج</span></div>
       <div class="cli"><div class="cld" style="background:#FF5722"></div><span class="clt">زیادہ</span></div>
       <div class="cli"><div class="cld" style="background:#1a1a2e"></div><span class="clt">عام</span></div>
+    </div>
+  </div>
+  <div class="mthcard">
+    <div class="mthtitle">📅 ماہانہ خلاصہ</div>
+    <div class="mthsub" id="mth-name"></div>
+    <div class="mth-stats">
+      <div class="mths"><div class="mthsv" id="mth-total">0</div><div class="mthsl">کل کیلوریز</div></div>
+      <div class="mths"><div class="mthsv" id="mth-avg">0</div><div class="mthsl">اوسط / دن</div></div>
+      <div class="mths"><div class="mthsv" id="mth-days">0</div><div class="mthsl">دن ٹریک</div></div>
+      <div class="mths"><div class="mthsv" id="mth-best">0</div><div class="mthsl">بہترین دن</div></div>
+    </div>
+    <div id="mth-cal"></div>
+    <div class="mth-leg">
+      <div class="mth-li"><div class="mth-ld" style="background:#E8F5E9"></div>ٹھیک</div>
+      <div class="mth-li"><div class="mth-ld" style="background:#E3F2FD"></div>کم</div>
+      <div class="mth-li"><div class="mth-ld" style="background:#FFF8E1"></div>تھوڑا زیادہ</div>
+      <div class="mth-li"><div class="mth-ld" style="background:#FFEBEE"></div>بہت زیادہ</div>
+      <div class="mth-li"><div class="mth-ld" style="background:#f0f0f0"></div>ڈیٹا نہیں</div>
     </div>
   </div>
   <div class="tcard">
@@ -676,8 +712,55 @@ function rProfile(){
   const mx=Math.max(...wd.map(d=>d.cal),goal,1);
   document.getElementById('wc').innerHTML=wd.map(d=>{const h2=d.cal>0?Math.max((d.cal/mx)*100,4):4;const col=d.cal>goal?'#FF5722':d.isT?'#4CAF50':'#1a1a2e';return`<div class="bcol"><div class="bnum">${d.cal>0?d.cal:''}</div><div class="bwrap"><div class="bar2" style="height:${h2}px;background:${col}"></div></div><div class="bday ${d.isT?'btoday':''}">${d.day}</div>${d.isT?'<div class="btlbl">آج</div>':''}</div>`;}).join('');
   document.getElementById('tl').innerHTML=[{e:'🥗',t:'ہر کھانے میں سبزیاں شامل کریں',en:'Include vegetables in every meal'},{e:'💧',t:'روزانہ 8 گلاس پانی پیئیں',en:'Drink 8 glasses of water daily'},{e:'🚶',t:'روزانہ 10,000 قدم چلیں',en:'Walk 10,000 steps daily'},{e:'😴',t:'رات کو 7-8 گھنٹے سوئیں',en:'Sleep 7-8 hours per night'},{e:'🍽️',t:'دن میں 3 بار کھانا کھائیں',en:'Eat 3 balanced meals daily'},{e:'🧁',t:'میٹھی چیزیں کم کھائیں',en:'Reduce sugary food intake'}].map(t=>`<div class="ti"><span class="tie">${t.e}</span><div class="tit"><div class="tit1">${t.t}</div><div class="tit2">${t.en}</div></div></div>`).join('');
+  rMonthlySummary();
 }
 function conH(){toast('⏳ Connecting...');setTimeout(()=>{ST.hc=true;ST.steps=Math.floor(Math.random()*5000)+3000;SS();rProfile();rHome();toast('✅ Health app سے connection ہو گئی!');},1500);}
+
+function rMonthlySummary(){
+  const now=new Date(),yr=now.getFullYear(),mo=now.getMonth();
+  const mName=now.toLocaleDateString('en-PK',{month:'long',year:'numeric'});
+  const dim=new Date(yr,mo+1,0).getDate();
+  const firstDay=(new Date(yr,mo,1).getDay()+6)%7;
+  const goal=gGoal(),today=now.getDate();
+  let totalCal=0,trackedDays=0,bestCal=0,bestDay=0;
+  const dd={};
+  for(let d=1;d<=dim;d++){
+    const dt=new Date(yr,mo,d),key=dt.toISOString().split('T')[0];
+    const logs=ST.logs[key]||[];
+    const cal=logs.reduce((s,e)=>s+e.cal,0);
+    dd[d]={cal,tracked:logs.length>0};
+    if(logs.length>0){totalCal+=cal;trackedDays++;if(cal>bestCal){bestCal=cal;bestDay=d;}}
+  }
+  const avgCal=trackedDays>0?Math.round(totalCal/trackedDays):0;
+  const dayNames=['M','T','W','T','F','S','S'];
+  let h='<div class="cal-hdr">'+dayNames.map(d=>`<div class="cal-dh">${d}</div>`).join('')+'</div>';
+  h+='<div class="cal-grid2">';
+  for(let i=0;i<firstDay;i++)h+='<div class="cal-empty"></div>';
+  for(let d=1;d<=dim;d++){
+    const data=dd[d],isT=d===today,isFut=d>today;
+    let bg,tc;
+    if(!data.tracked){bg=isFut?'#fafafa':'#f0f0f0';tc=isFut?'#ddd':'#bbb';}
+    else{const r=data.cal/goal;if(r<0.7){bg='#E3F2FD';tc='#1565C0';}else if(r<=1.1){bg='#E8F5E9';tc='#2E7D32';}else if(r<=1.3){bg='#FFF8E1';tc='#E65100';}else{bg='#FFEBEE';tc='#C62828';}}
+    const bdr=isT?'outline:2px solid #1a1a2e;':'';
+    const calTxt=data.tracked?(data.cal>=1000?(data.cal/1000).toFixed(1)+'k':data.cal):'';
+    h+=`<div class="cal-day" style="background:${bg};${bdr}" onclick="showDayD(${d})"><span class="cal-dn" style="color:${isT?'#1a1a2e':tc}">${d}</span><span class="cal-dc" style="color:${tc}">${calTxt}</span></div>`;
+  }
+  h+='</div>';
+  document.getElementById('mth-name').textContent=mName+' — Monthly Summary';
+  document.getElementById('mth-total').textContent=(totalCal/1000).toFixed(1)+'k';
+  document.getElementById('mth-avg').textContent=avgCal;
+  document.getElementById('mth-days').textContent=trackedDays+'/'+dim;
+  document.getElementById('mth-best').textContent=bestDay?bestDay+'th':'—';
+  document.getElementById('mth-cal').innerHTML=h;
+}
+function showDayD(d){
+  const now=new Date(),dt=new Date(now.getFullYear(),now.getMonth(),d);
+  const key=dt.toISOString().split('T')[0];
+  const logs=ST.logs[key]||[];
+  if(!logs.length){toast('📅 '+dt.toLocaleDateString('en-PK',{day:'numeric',month:'short'})+': کوئی ڈیٹا نہیں');return;}
+  const cal=logs.reduce((s,e)=>s+e.cal,0);
+  toast('📅 '+dt.toLocaleDateString('en-PK',{day:'numeric',month:'short'})+': '+cal+' cal ('+logs.length+' items)');
+}
 
 // NAV
 function go(n){
