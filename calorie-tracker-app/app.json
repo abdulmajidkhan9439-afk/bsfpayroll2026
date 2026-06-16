@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "کیلوری ٹریکر",
+    "slug": "calorie-tracker-pk",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#1a1a2e"
+    },
+    "android": {
+      "package": "com.bsf.calorietracker",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#1a1a2e"
+      },
+      "minSdkVersion": 26,
+      "targetSdkVersion": 34,
+      "intentFilters": [
+        {
+          "action": "android.intent.action.VIEW",
+          "data": [{ "scheme": "calorie-tracker-pk" }],
+          "category": ["android.intent.category.DEFAULT", "android.intent.category.BROWSABLE"]
+        }
+      ]
+    },
+    "plugins": [
+      [
+        "react-native-health-connect",
+        {
+          "healthConnectVersion": "1.1.0"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "YOUR_EAS_PROJECT_ID"
+      }
+    }
+  }
+}

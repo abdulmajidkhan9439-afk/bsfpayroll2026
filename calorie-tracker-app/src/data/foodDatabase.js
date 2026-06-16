@@ -1,0 +1,93 @@
+export const FOOD_DB = [
+  // 🇵🇰 PAKISTANI
+  {id:'pk1',n:'Biryani (Mutton)',u:'مٹن بریانی',e:'🍛',cal:520,p:28,c:58,f:18,s:'1 plate 300g',cat:'🇵🇰 Pakistani'},
+  {id:'pk2',n:'Biryani (Chicken)',u:'چکن بریانی',e:'🍚',cal:450,p:25,c:55,f:15,s:'1 plate 300g',cat:'🇵🇰 Pakistani'},
+  {id:'pk3',n:'Nihari',u:'نہاری',e:'🥘',cal:380,p:32,c:12,f:24,s:'1 bowl 250g',cat:'🇵🇰 Pakistani'},
+  {id:'pk4',n:'Halwa Puri',u:'حلوہ پوری',e:'🫓',cal:650,p:10,c:82,f:30,s:'1 set',cat:'🇵🇰 Pakistani'},
+  {id:'pk5',n:'Paratha Plain',u:'سادہ پراٹھہ',e:'🫓',cal:260,p:5,c:38,f:10,s:'1 paratha',cat:'🇵🇰 Pakistani'},
+  {id:'pk6',n:'Paratha Aloo',u:'آلو پراٹھہ',e:'🥔',cal:320,p:7,c:48,f:12,s:'1 paratha',cat:'🇵🇰 Pakistani'},
+  {id:'pk7',n:'Samosa',u:'سموسہ',e:'🔺',cal:130,p:4,c:18,f:6,s:'1 piece',cat:'🇵🇰 Pakistani'},
+  {id:'pk8',n:'Pakora',u:'پکوڑا',e:'🟤',cal:60,p:2,c:7,f:3,s:'1 piece',cat:'🇵🇰 Pakistani'},
+  {id:'pk9',n:'Naan',u:'نان',e:'🫓',cal:280,p:9,c:52,f:5,s:'1 naan',cat:'🇵🇰 Pakistani'},
+  {id:'pk10',n:'Chapati / Roti',u:'چپاتی / روٹی',e:'🫓',cal:120,p:4,c:22,f:2,s:'1 roti',cat:'🇵🇰 Pakistani'},
+  {id:'pk11',n:'Daal Chawal',u:'دال چاول',e:'🍲',cal:380,p:14,c:68,f:8,s:'1 plate',cat:'🇵🇰 Pakistani'},
+  {id:'pk12',n:'Chicken Karahi',u:'چکن کڑاہی',e:'🍗',cal:420,p:35,c:8,f:28,s:'200g',cat:'🇵🇰 Pakistani'},
+  {id:'pk13',n:'Seekh Kebab',u:'سیخ کباب',e:'🍢',cal:165,p:18,c:4,f:9,s:'2 pieces',cat:'🇵🇰 Pakistani'},
+  {id:'pk14',n:'Chapli Kebab',u:'چپلی کباب',e:'🥩',cal:210,p:20,c:6,f:12,s:'1 piece',cat:'🇵🇰 Pakistani'},
+  {id:'pk15',n:'Chicken Tikka',u:'چکن ٹکہ',e:'🍖',cal:240,p:28,c:4,f:13,s:'2 pieces',cat:'🇵🇰 Pakistani'},
+  {id:'pk16',n:'Bun Kebab',u:'بن کباب',e:'🍔',cal:280,p:14,c:30,f:12,s:'1 piece',cat:'🇵🇰 Pakistani'},
+  {id:'pk17',n:'Pulao',u:'پلاؤ',e:'🍚',cal:420,p:18,c:62,f:12,s:'1 plate',cat:'🇵🇰 Pakistani'},
+  {id:'pk18',n:'Aloo Gosht',u:'آلو گوشت',e:'🥘',cal:350,p:22,c:28,f:16,s:'1 bowl',cat:'🇵🇰 Pakistani'},
+  // 🍗 KFC
+  {id:'kfc1',n:'Zinger Burger',u:'زنگر برگر',e:'🍔',cal:540,p:28,c:52,f:23,s:'1 burger',cat:'🍗 KFC'},
+  {id:'kfc2',n:'Zinger Box Meal',u:'زنگر باکس میل',e:'📦',cal:970,p:40,c:98,f:42,s:'1 meal',cat:'🍗 KFC'},
+  {id:'kfc3',n:'Original Chicken',u:'اوریجنل چکن',e:'🍗',cal:320,p:25,c:12,f:20,s:'1 piece',cat:'🍗 KFC'},
+  {id:'kfc4',n:'Hot Wings (3pcs)',u:'ہاٹ ونگز',e:'🔥',cal:290,p:18,c:14,f:18,s:'3 pieces',cat:'🍗 KFC'},
+  {id:'kfc5',n:'Crispy Strips',u:'کریسپی سٹرپس',e:'🍗',cal:350,p:22,c:22,f:18,s:'3 pieces',cat:'🍗 KFC'},
+  {id:'kfc6',n:'French Fries Regular',u:'فرنچ فرائز',e:'🍟',cal:320,p:4,c:44,f:15,s:'1 regular',cat:'🍗 KFC'},
+  {id:'kfc7',n:'Twister Wrap',u:'ٹوسٹر ریپ',e:'🌯',cal:490,p:24,c:48,f:22,s:'1 wrap',cat:'🍗 KFC'},
+  // 🍔 McDONALD'S
+  {id:'mc1',n:"Big Mac",u:'بگ میک',e:'🍔',cal:550,p:25,c:46,f:30,s:'1 burger',cat:"🍔 McDonald's"},
+  {id:'mc2',n:'McSpicy Burger',u:'میک اسپائسی',e:'🌶️',cal:480,p:24,c:44,f:22,s:'1 burger',cat:"🍔 McDonald's"},
+  {id:'mc3',n:'McChicken Burger',u:'میک چکن',e:'🍔',cal:400,p:22,c:40,f:17,s:'1 burger',cat:"🍔 McDonald's"},
+  {id:'mc4',n:'McFries Medium',u:'میک فرائز',e:'🍟',cal:340,p:4,c:44,f:16,s:'1 medium',cat:"🍔 McDonald's"},
+  {id:'mc5',n:'McFlurry Oreo',u:'میک فلری',e:'🍦',cal:510,p:12,c:80,f:17,s:'1 cup',cat:"🍔 McDonald's"},
+  {id:'mc6',n:'Chicken McNuggets 6pc',u:'چکن نگٹس',e:'🍗',cal:280,p:15,c:17,f:17,s:'6 pieces',cat:"🍔 McDonald's"},
+  // 🥖 SUBWAY
+  {id:'s1',n:'Chicken Teriyaki 6"',u:'چکن تیریاکی',e:'🥖',cal:370,p:26,c:48,f:8,s:'6 inch',cat:'🥖 Subway'},
+  {id:'s2',n:'Spicy Italian 6"',u:'اسپائسی اٹالین',e:'🌶️',cal:480,p:20,c:44,f:24,s:'6 inch',cat:'🥖 Subway'},
+  {id:'s3',n:'Tuna Sub 6"',u:'ٹونا سب',e:'🐟',cal:480,p:24,c:44,f:22,s:'6 inch',cat:'🥖 Subway'},
+  {id:'s4',n:'Veggie Delight 6"',u:'ویجی ڈیلائٹ',e:'🥗',cal:230,p:9,c:44,f:3,s:'6 inch',cat:'🥖 Subway'},
+  // 🥤 COLD DRINKS
+  {id:'cd1',n:'Pepsi',u:'پیپسی',e:'🥤',cal:150,p:0,c:41,f:0,s:'355ml can',cat:'🥤 Cold Drinks'},
+  {id:'cd2',n:'Coca-Cola',u:'کوکا کولا',e:'🥤',cal:140,p:0,c:39,f:0,s:'355ml can',cat:'🥤 Cold Drinks'},
+  {id:'cd3',n:'Mountain Dew',u:'ماؤنٹین ڈیو',e:'💚',cal:170,p:0,c:46,f:0,s:'355ml can',cat:'🥤 Cold Drinks'},
+  {id:'cd4',n:'7UP',u:'7 اپ',e:'🟢',cal:140,p:0,c:38,f:0,s:'355ml can',cat:'🥤 Cold Drinks'},
+  {id:'cd5',n:'Pakola',u:'پاکولا',e:'💚',cal:145,p:0,c:38,f:0,s:'355ml can',cat:'🥤 Cold Drinks'},
+  {id:'cd6',n:'Lassi Sweet',u:'میٹھی لسی',e:'🥛',cal:240,p:8,c:40,f:6,s:'350ml',cat:'🥤 Cold Drinks'},
+  {id:'cd7',n:'Rooh Afza',u:'روح افزا',e:'🌹',cal:160,p:4,c:32,f:3,s:'250ml',cat:'🥤 Cold Drinks'},
+  {id:'cd8',n:'Mango Juice',u:'آم کا جوس',e:'🥭',cal:130,p:1,c:32,f:0,s:'250ml',cat:'🥤 Cold Drinks'},
+  // ☕ TEA & COFFEE
+  {id:'tc1',n:'Pakistani Chai',u:'پاکستانی چائے',e:'🍵',cal:90,p:3,c:14,f:3,s:'1 cup 200ml',cat:'☕ Tea & Coffee'},
+  {id:'tc2',n:'Doodh Pati',u:'دودھ پتی',e:'🍵',cal:130,p:5,c:16,f:6,s:'1 cup 200ml',cat:'☕ Tea & Coffee'},
+  {id:'tc3',n:'Kashmiri Chai',u:'کشمیری چائے',e:'🩷',cal:150,p:5,c:18,f:7,s:'1 cup 200ml',cat:'☕ Tea & Coffee'},
+  {id:'tc4',n:'Green Tea',u:'گرین ٹی',e:'🍃',cal:2,p:0,c:0,f:0,s:'1 cup',cat:'☕ Tea & Coffee'},
+  {id:'tc5',n:'Black Coffee',u:'بلیک کافی',e:'☕',cal:5,p:0,c:0,f:0,s:'1 cup',cat:'☕ Tea & Coffee'},
+  {id:'tc6',n:'Latte',u:'لاٹے',e:'☕',cal:190,p:10,c:18,f:8,s:'350ml',cat:'☕ Tea & Coffee'},
+  {id:'tc7',n:'Cappuccino',u:'کیپوچینو',e:'☕',cal:120,p:6,c:12,f:5,s:'300ml',cat:'☕ Tea & Coffee'},
+  // 🥗 SALADS
+  {id:'sl1',n:'Green Salad',u:'سبز سلاد',e:'🥗',cal:50,p:3,c:8,f:1,s:'1 bowl',cat:'🥗 Salads'},
+  {id:'sl2',n:'Caesar Salad',u:'سیزر سلاد',e:'🥗',cal:180,p:8,c:12,f:12,s:'1 bowl',cat:'🥗 Salads'},
+  {id:'sl3',n:'Chicken Salad',u:'چکن سلاد',e:'🥗',cal:220,p:20,c:10,f:11,s:'1 bowl',cat:'🥗 Salads'},
+  {id:'sl4',n:'Raita',u:'رائتہ',e:'🥣',cal:80,p:4,c:10,f:2,s:'1 bowl',cat:'🥗 Salads'},
+  // 🍎 FRUITS
+  {id:'fr1',n:'Apple',u:'سیب',e:'🍎',cal:95,p:1,c:25,f:0,s:'1 medium',cat:'🍎 Fruits'},
+  {id:'fr2',n:'Banana',u:'کیلا',e:'🍌',cal:105,p:1,c:27,f:0,s:'1 medium',cat:'🍎 Fruits'},
+  {id:'fr3',n:'Mango',u:'آم',e:'🥭',cal:135,p:1,c:35,f:1,s:'1 cup',cat:'🍎 Fruits'},
+  {id:'fr4',n:'Orange',u:'سنترہ',e:'🍊',cal:62,p:1,c:15,f:0,s:'1 medium',cat:'🍎 Fruits'},
+  {id:'fr5',n:'Watermelon',u:'تربوز',e:'🍉',cal:86,p:2,c:22,f:0,s:'2 cups',cat:'🍎 Fruits'},
+  {id:'fr6',n:'Guava',u:'امرود',e:'🍈',cal:68,p:3,c:14,f:1,s:'1 medium',cat:'🍎 Fruits'},
+  {id:'fr7',n:'Dates Khajoor',u:'کھجور',e:'🌴',cal:280,p:2,c:75,f:0,s:'5 pieces',cat:'🍎 Fruits'},
+  // 🥦 VEGETABLES
+  {id:'vg1',n:'Potato Boiled',u:'ابلے آلو',e:'🥔',cal:86,p:2,c:20,f:0,s:'1 medium',cat:'🥦 Vegetables'},
+  {id:'vg2',n:'Tomato',u:'ٹماٹر',e:'🍅',cal:22,p:1,c:5,f:0,s:'1 medium',cat:'🥦 Vegetables'},
+  {id:'vg3',n:'Carrot Gajar',u:'گاجر',e:'🥕',cal:52,p:1,c:12,f:0,s:'1 medium',cat:'🥦 Vegetables'},
+  {id:'vg4',n:'Spinach Palak',u:'پالک',e:'🥬',cal:23,p:3,c:4,f:0,s:'1 cup',cat:'🥦 Vegetables'},
+  {id:'vg5',n:'Broccoli',u:'بروکلی',e:'🥦',cal:55,p:4,c:11,f:1,s:'1 cup',cat:'🥦 Vegetables'},
+  {id:'vg6',n:'Cucumber Kheera',u:'کھیرا',e:'🥒',cal:16,p:1,c:4,f:0,s:'1 cup',cat:'🥦 Vegetables'},
+  {id:'vg7',n:'Okra Bhindi',u:'بھنڈی',e:'🫛',cal:33,p:2,c:7,f:0,s:'1 cup',cat:'🥦 Vegetables'},
+  // 🍮 DESSERTS
+  {id:'ds1',n:'Gulab Jamun',u:'گلاب جامن',e:'🟤',cal:270,p:4,c:50,f:8,s:'2 pieces',cat:'🍮 Desserts'},
+  {id:'ds2',n:'Kheer',u:'کھیر',e:'🍮',cal:230,p:6,c:40,f:6,s:'1 bowl',cat:'🍮 Desserts'},
+  {id:'ds3',n:'Jalebi',u:'جلیبی',e:'🌀',cal:150,p:2,c:34,f:2,s:'2 pieces',cat:'🍮 Desserts'},
+  {id:'ds4',n:'Kulfi',u:'کلفی',e:'🍦',cal:180,p:5,c:24,f:8,s:'1 piece',cat:'🍮 Desserts'},
+];
+
+export const MEALS = [
+  {key:'breakfast', label:'Breakfast', urdu:'ناشتہ', emoji:'🌅'},
+  {key:'lunch',     label:'Lunch',     urdu:'دوپہر',  emoji:'☀️'},
+  {key:'dinner',    label:'Dinner',    urdu:'رات',    emoji:'🌙'},
+  {key:'snack',     label:'Snack',     urdu:'اسنیک',  emoji:'🍿'},
+];
+
+export const CATEGORIES = ['🌍 All', ...new Set(FOOD_DB.map(f => f.cat))];
