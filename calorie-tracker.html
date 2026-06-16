@@ -208,6 +208,23 @@ input[type=number]:focus{border-color:#1a1a2e}
 .hfu{font-size:11px;color:#aaa}
 .hck{font-size:15px}
 .conbtn{background:#1a1a2e;border:none;border-radius:12px;padding:12px;width:100%;font-size:14px;font-weight:700;color:#fff;cursor:pointer;margin-top:12px}
+/* HEALTH SYNC */
+.hmetrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.hmet{background:#f9f9f9;border-radius:12px;padding:10px;text-align:center}
+.hmev{font-size:20px;font-weight:800;color:#1a1a2e}
+.hmel{font-size:10px;color:#888;margin-top:2px}
+.hbtn-row{display:flex;gap:8px;margin-top:10px}
+.hbtn2{flex:1;border:none;border-radius:10px;padding:10px;font-size:12px;font-weight:700;cursor:pointer}
+.sc-active{background:#E8F5E9;color:#2E7D32;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+/* HEALTH MODAL */
+.hsovl{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;z-index:200;opacity:0;pointer-events:none;transition:opacity .3s}
+.hsovl.show{opacity:1;pointer-events:all}
+.hscard{background:#fff;border-radius:24px 24px 0 0;padding:22px;width:100%;max-width:480px;margin:0 auto;transform:translateY(100%);transition:transform .3s;max-height:85vh;overflow-y:auto}
+.hsovl.show .hscard{transform:translateY(0)}
+.hsinp{width:100%;border:1.5px solid #e0e0e0;border-radius:10px;padding:10px 12px;font-size:15px;color:#333;background:#fafafa;outline:none;margin-top:5px}
+.hsinp:focus{border-color:#1a1a2e}
+.hslbl{font-size:12px;font-weight:700;color:#555;display:block;margin-top:12px}
 .ccrd{background:#fff;margin:12px 14px;border-radius:16px;padding:15px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
 .ctitle{font-size:15px;font-weight:700;text-align:center}
 .csub{font-size:12px;color:#aaa;text-align:center;margin-bottom:15px}
@@ -344,10 +361,19 @@ input[type=number]:focus{border-color:#1a1a2e}
   </div>
   <div class="sgrid" id="psg"></div>
   <div class="hcard">
-    <div class="hhdr"><div class="htitle">🤖 Google Health Connect</div><div class="hdot" id="hd"></div></div>
-    <div class="hsub" id="hs">Health app سے steps اور data sync کریں</div>
-    <div id="hfs"></div>
-    <button class="conbtn" id="conb" onclick="conH()">📱 Health Connect کریں</button>
+    <div class="hhdr"><div class="htitle">❤️ Health Sync</div><div class="hdot" id="hd"></div></div>
+    <div class="hsub" id="hs">Phone کا sensor اور health data sync کریں</div>
+    <div class="hmetrics">
+      <div class="hmet"><div class="hmev" id="hs-sv">0</div><div class="hmel">👟 قدم / Steps</div></div>
+      <div class="hmet"><div class="hmev" id="hs-cv">0</div><div class="hmel">🔥 Cal Burned</div></div>
+      <div class="hmet"><div class="hmev" id="hs-hrv">--</div><div class="hmel">❤️ Heart Rate</div></div>
+      <div class="hmet"><div class="hmev" id="hs-slv">--</div><div class="hmel">😴 Sleep (hrs)</div></div>
+    </div>
+    <div class="hbtn-row">
+      <button class="hbtn2" id="sc-btn" onclick="toggleSC()" style="background:#E3F2FD;color:#1565C0">📱 Step Counter</button>
+      <button class="hbtn2" onclick="openHSync()" style="background:#FFF8E1;color:#E65100">✏️ Manual Sync</button>
+    </div>
+    <button class="conbtn" id="conb" onclick="openHSync()">📊 Health Data Sync کریں</button>
   </div>
   <div class="ccrd">
     <div class="ctitle">📊 ہفتہ وار کیلوریز</div>
@@ -432,6 +458,32 @@ input[type=number]:focus{border-color:#1a1a2e}
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- HEALTH SYNC MODAL -->
+<div class="hsovl" id="hso" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="hscard">
+    <div style="text-align:center;font-size:36px;margin-bottom:6px">❤️</div>
+    <div style="font-size:17px;font-weight:800;text-align:center;margin-bottom:3px">Health Data Sync</div>
+    <div style="font-size:12px;color:#888;text-align:center;margin-bottom:16px">اپنی health app سے ڈیٹا یہاں درج کریں</div>
+    <label class="hslbl">👟 آج کے قدم / Steps Today</label>
+    <input class="hsinp" type="number" id="hsi-steps" placeholder="مثلاً: 6500">
+    <label class="hslbl">❤️ دل کی دھڑکن / Heart Rate (bpm)</label>
+    <input class="hsinp" type="number" id="hsi-hr" placeholder="مثلاً: 72">
+    <label class="hslbl">😴 نیند / Sleep Hours (آج رات)</label>
+    <input class="hsinp" type="number" id="hsi-sleep" placeholder="مثلاً: 7.5" step="0.5">
+    <label class="hslbl">⚖️ وزن / Weight (kg) - اختیاری</label>
+    <input class="hsinp" type="number" id="hsi-wt" placeholder="مثلاً: 70">
+    <div style="background:#E8F5E9;border-radius:10px;padding:10px;margin-top:14px;font-size:12px;color:#2E7D32">
+      💡 <strong>Phone health app سے کیسے دیکھیں:</strong><br>
+      Android: Google Fit / Samsung Health → آج کے steps copy کریں<br>
+      iPhone: Health app → Activity → Steps
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button onclick="document.getElementById('hso').classList.remove('show')" style="flex:1;background:#f5f5f5;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:600;color:#666;cursor:pointer">Cancel</button>
+      <button onclick="saveHData()" style="flex:2;background:#1a1a2e;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;color:#fff;cursor:pointer">✅ Save & Sync</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const FD=[
@@ -570,7 +622,7 @@ const MEALS=[{k:'breakfast',l:'Breakfast',u:'ناشتہ',e:'🌅'},{k:'lunch',l:
 const ACTS=[{k:'sedentary',l:'Sedentary',u:'بالکل سست',m:1.2,e:'🛋️'},{k:'light',l:'Lightly Active',u:'تھوڑا فعال',m:1.375,e:'🚶'},{k:'moderate',l:'Moderately Active',u:'درمیانہ فعال',m:1.55,e:'🏃'},{k:'active',l:'Very Active',u:'بہت فعال',m:1.725,e:'🏋️'},{k:'veryActive',l:'Extremely Active',u:'انتہائی فعال',m:1.9,e:'⚡'}];
 const BMIRS=[{mn:0,mx:16,l:'Severely Underweight',u:'بہت کم وزن',c:'#1565C0',e:'⚠️'},{mn:16,mx:18.5,l:'Underweight',u:'کم وزن',c:'#2196F3',e:'📉'},{mn:18.5,mx:25,l:'Normal / Healthy',u:'نارمل - صحت مند',c:'#4CAF50',e:'✅'},{mn:25,mx:30,l:'Overweight',u:'زیادہ وزن',c:'#FF9800',e:'⚡'},{mn:30,mx:35,l:'Obese Class I',u:'موٹاپا - درجہ ۱',c:'#FF5722',e:'⚠️'},{mn:35,mx:40,l:'Obese Class II',u:'موٹاپا - درجہ ۲',c:'#E53935',e:'🚨'},{mn:40,mx:999,l:'Obese Class III',u:'موٹاپا - درجہ ۳',c:'#B71C1C',e:'🆘'}];
 
-let ST={logs:{},prof:{w:70,h:170,age:25,g:'male',act:'moderate',goal:'maintain',name:'',uid:''},water:0,steps:0,hc:false};
+let ST={logs:{},prof:{w:70,h:170,age:25,g:'male',act:'moderate',goal:'maintain',name:'',uid:''},water:0,steps:0,hc:false,health:{}};
 const TD=new Date().toISOString().split('T')[0];
 let CF=null,CSV=1,CMT='lunch',SCAT=null;
 let SG='male',SA='moderate',SGL='maintain';
@@ -745,9 +797,95 @@ function rProfile(){
   const mx=Math.max(...wd.map(d=>d.cal),goal,1);
   document.getElementById('wc').innerHTML=wd.map(d=>{const h2=d.cal>0?Math.max((d.cal/mx)*100,4):4;const col=d.cal>goal?'#FF5722':d.isT?'#4CAF50':'#1a1a2e';return`<div class="bcol"><div class="bnum">${d.cal>0?d.cal:''}</div><div class="bwrap"><div class="bar2" style="height:${h2}px;background:${col}"></div></div><div class="bday ${d.isT?'btoday':''}">${d.day}</div>${d.isT?'<div class="btlbl">آج</div>':''}</div>`;}).join('');
   document.getElementById('tl').innerHTML=[{e:'🥗',t:'ہر کھانے میں سبزیاں شامل کریں',en:'Include vegetables in every meal'},{e:'💧',t:'روزانہ 8 گلاس پانی پیئیں',en:'Drink 8 glasses of water daily'},{e:'🚶',t:'روزانہ 10,000 قدم چلیں',en:'Walk 10,000 steps daily'},{e:'😴',t:'رات کو 7-8 گھنٹے سوئیں',en:'Sleep 7-8 hours per night'},{e:'🍽️',t:'دن میں 3 بار کھانا کھائیں',en:'Eat 3 balanced meals daily'},{e:'🧁',t:'میٹھی چیزیں کم کھائیں',en:'Reduce sugary food intake'}].map(t=>`<div class="ti"><span class="tie">${t.e}</span><div class="tit"><div class="tit1">${t.t}</div><div class="tit2">${t.en}</div></div></div>`).join('');
+  rHealthCard();
   rMonthlySummary();
 }
-function conH(){toast('⏳ Connecting...');setTimeout(()=>{ST.hc=true;ST.steps=Math.floor(Math.random()*5000)+3000;SS();rProfile();rHome();toast('✅ Health app سے connection ہو گئی!');},1500);}
+// ── HEALTH SYNC ──────────────────────────────────────────────
+let scRunning=false,lastMag=9.8,stepCD=false;
+
+function openHSync(){
+  const h=ST.health||{};
+  document.getElementById('hsi-steps').value=ST.steps||'';
+  document.getElementById('hsi-hr').value=h.hr||'';
+  document.getElementById('hsi-sleep').value=h.sleep||'';
+  document.getElementById('hsi-wt').value=ST.prof.w||'';
+  document.getElementById('hso').classList.add('show');
+}
+
+function saveHData(){
+  const steps=parseInt(document.getElementById('hsi-steps').value)||ST.steps||0;
+  const hr=parseInt(document.getElementById('hsi-hr').value)||0;
+  const sleep=parseFloat(document.getElementById('hsi-sleep').value)||0;
+  const wt=parseFloat(document.getElementById('hsi-wt').value)||ST.prof.w;
+  ST.steps=steps;
+  ST.hc=true;
+  ST.health={hr:hr||undefined,sleep:sleep||undefined,lastSync:new Date().toLocaleTimeString('en-PK',{hour:'2-digit',minute:'2-digit'})};
+  if(wt)ST.prof.w=wt;
+  SS();
+  document.getElementById('hso').classList.remove('show');
+  rProfile();rHome();
+  toast('✅ Health data sync ہو گئی! — '+steps+' steps');
+}
+
+function toggleSC(){
+  if(scRunning){stopSC();}else{startSC();}
+}
+
+function startSC(){
+  if(typeof DeviceMotionEvent==='undefined'){toast('⚠️ یہ browser sensor support نہیں کرتا');return;}
+  const go=()=>{
+    window.addEventListener('devicemotion',onMotion,{passive:true});
+    scRunning=true;ST.hc=true;SS();
+    document.getElementById('sc-btn').textContent='🔴 Stop Counter';
+    document.getElementById('sc-btn').className='hbtn2 sc-active';
+    toast('✅ Step counter چل رہا ہے — phone pocket میں رکھیں');
+    rProfile();
+  };
+  if(typeof DeviceMotionEvent.requestPermission==='function'){
+    DeviceMotionEvent.requestPermission().then(r=>{if(r==='granted')go();else toast('⚠️ Motion permission denied');}).catch(()=>toast('⚠️ Permission error'));
+  } else {go();}
+}
+
+function stopSC(){
+  window.removeEventListener('devicemotion',onMotion);
+  scRunning=false;
+  document.getElementById('sc-btn').textContent='📱 Step Counter';
+  document.getElementById('sc-btn').className='hbtn2';
+  document.getElementById('sc-btn').style.cssText='background:#E3F2FD;color:#1565C0';
+  toast('⏹️ Step counter بند — '+ST.steps+' قدم');
+}
+
+function onMotion(e){
+  const a=e.accelerationIncludingGravity;
+  if(!a)return;
+  const mag=Math.sqrt((a.x||0)**2+(a.y||0)**2+(a.z||0)**2);
+  const diff=mag-lastMag;
+  if(diff>3&&!stepCD){
+    ST.steps=(ST.steps||0)+1;
+    stepCD=true;
+    setTimeout(()=>{stepCD=false;},250);
+    if(ST.steps%20===0){SS();
+      document.getElementById('hs-sv').textContent=ST.steps.toLocaleString();
+      document.getElementById('hs-cv').textContent=Math.round(ST.steps*0.04);
+      document.getElementById('stv')&&(document.getElementById('stv').textContent=ST.steps.toLocaleString());
+    }
+  }
+  lastMag=mag*0.2+lastMag*0.8;
+}
+
+function conH(){openHSync();}
+
+function rHealthCard(){
+  const h=ST.health||{};
+  document.getElementById('hs-sv').textContent=(ST.steps||0).toLocaleString();
+  document.getElementById('hs-cv').textContent=Math.round((ST.steps||0)*0.04);
+  document.getElementById('hs-hrv').textContent=h.hr?h.hr+' bpm':'--';
+  document.getElementById('hs-slv').textContent=h.sleep?h.sleep+'h':'--';
+  document.getElementById('hd').className='hdot'+(ST.hc?' on':'');
+  document.getElementById('hs').textContent=ST.hc?'✅ Synced'+(h.lastSync?' — آخری sync: '+h.lastSync:''):'Health data sync کریں';
+  document.getElementById('conb').textContent=ST.hc?'🔄 Data Update کریں':'📊 Health Data Sync کریں';
+  if(scRunning){document.getElementById('sc-btn').textContent='🔴 Stop Counter';document.getElementById('sc-btn').className='hbtn2 sc-active';}
+}
 
 function rMonthlySummary(){
   const now=new Date(),yr=now.getFullYear(),mo=now.getMonth();
