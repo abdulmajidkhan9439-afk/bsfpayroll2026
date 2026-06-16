@@ -248,6 +248,16 @@ input[type=number]:focus{border-color:#1a1a2e}
 .tit{flex:1}
 .tit1{font-size:13px;color:#333;font-weight:500}
 .tit2{font-size:11px;color:#aaa;margin-top:2px}
+/* CALENDAR SCREEN */
+.cday{border-radius:10px;padding:6px 3px;display:flex;flex-direction:column;align-items:center;min-height:54px;cursor:pointer;transition:transform .1s;-webkit-tap-highlight-color:transparent}
+.cday:active{transform:scale(.92)}
+.cdnum{font-size:14px;font-weight:700;line-height:1}
+.cdcal{font-size:9px;margin-top:3px;font-weight:600;text-align:center}
+/* DAY DETAIL MODAL */
+.ddovl{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;z-index:200;opacity:0;pointer-events:none;transition:opacity .3s}
+.ddovl.show{opacity:1;pointer-events:all}
+.ddcard{background:#fff;border-radius:24px 24px 0 0;padding:20px;width:100%;max-width:480px;margin:0 auto;transform:translateY(100%);transition:transform .3s;max-height:82vh;overflow-y:auto}
+.ddovl.show .ddcard{transform:translateY(0)}
 /* MONTHLY SUMMARY */
 .mthcard{background:#fff;margin:12px 14px;border-radius:16px;padding:15px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
 .mthtitle{font-size:15px;font-weight:700;text-align:center;color:#1a1a2e}
@@ -410,12 +420,40 @@ input[type=number]:focus{border-color:#1a1a2e}
   </div>
 </div>
 
+<!-- CALENDAR -->
+<div id="sc-calendar" class="screen">
+  <div class="ghdr" style="padding-top:44px;padding-bottom:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <button onclick="chMo(-1)" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:10px;padding:8px 16px;cursor:pointer;font-size:20px;font-weight:700">‹</button>
+      <div style="text-align:center">
+        <div style="font-size:17px;font-weight:800" id="cal-mo-title"></div>
+        <div style="font-size:11px;color:#ccc;margin-top:2px" id="cal-mo-sub"></div>
+      </div>
+      <button onclick="chMo(1)" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:10px;padding:8px 16px;cursor:pointer;font-size:20px;font-weight:700">›</button>
+    </div>
+    <div class="srow" id="cal-stats"></div>
+  </div>
+  <div style="padding:12px 10px 0">
+    <div class="cal-hdr" style="margin-bottom:6px" id="cal-hdr2"></div>
+    <div id="cal-main"></div>
+  </div>
+  <div style="padding:12px 14px;margin-top:4px">
+    <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#555"><div style="width:12px;height:12px;border-radius:3px;background:#E8F5E9"></div>ٹھیک</div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#555"><div style="width:12px;height:12px;border-radius:3px;background:#E3F2FD"></div>کم</div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#555"><div style="width:12px;height:12px;border-radius:3px;background:#FFF8E1"></div>تھوڑا زیادہ</div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#555"><div style="width:12px;height:12px;border-radius:3px;background:#FFEBEE"></div>بہت زیادہ</div>
+    </div>
+  </div>
+</div>
+
 <!-- NAV -->
 <nav class="bnav">
-  <button class="nb active" id="n-home" onclick="go('home')"><span class="ni">🏠</span><span class="nl">Home</span></button>
-  <button class="nb" id="n-food" onclick="openMS()"><span class="ni">🍽️</span><span class="nl">Food</span></button>
-  <button class="nb" id="n-bmi" onclick="go('bmi')"><span class="ni">⚖️</span><span class="nl">BMI</span></button>
-  <button class="nb" id="n-profile" onclick="go('profile')"><span class="ni">👤</span><span class="nl">Profile</span></button>
+  <button class="nb active" id="n-home" onclick="go('home')"><span class="ni" style="font-size:19px">🏠</span><span class="nl">Home</span></button>
+  <button class="nb" id="n-food" onclick="openMS()"><span class="ni" style="font-size:19px">🍽️</span><span class="nl">Food</span></button>
+  <button class="nb" id="n-calendar" onclick="go('calendar')"><span class="ni" style="font-size:19px">📅</span><span class="nl">Calendar</span></button>
+  <button class="nb" id="n-bmi" onclick="go('bmi')"><span class="ni" style="font-size:19px">⚖️</span><span class="nl">BMI</span></button>
+  <button class="nb" id="n-profile" onclick="go('profile')"><span class="ni" style="font-size:19px">👤</span><span class="nl">Profile</span></button>
 </nav>
 
 <!-- FOOD MODAL -->
@@ -458,6 +496,21 @@ input[type=number]:focus{border-color:#1a1a2e}
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- DAY DETAIL MODAL -->
+<div class="ddovl" id="ddo" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="ddcard">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <div>
+        <div style="font-size:16px;font-weight:800;color:#1a1a2e" id="dd-date"></div>
+        <div style="font-size:13px;color:#FF9800;font-weight:700;margin-top:2px" id="dd-cal"></div>
+      </div>
+      <button onclick="document.getElementById('ddo').classList.remove('show')" style="background:#f5f5f5;border:none;border-radius:20px;width:32px;height:32px;font-size:16px;cursor:pointer">✕</button>
+    </div>
+    <div id="dd-meals" style="margin:12px 0"></div>
+    <button id="dd-add" style="width:100%;background:#1a1a2e;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;margin-top:4px"></button>
+  </div>
+</div>
 
 <!-- HEALTH SYNC MODAL -->
 <div class="hsovl" id="hso" onclick="if(event.target===this)this.classList.remove('show')">
@@ -624,8 +677,9 @@ const BMIRS=[{mn:0,mx:16,l:'Severely Underweight',u:'بہت کم وزن',c:'#156
 
 let ST={logs:{},prof:{w:70,h:170,age:25,g:'male',act:'moderate',goal:'maintain',name:'',uid:''},water:0,steps:0,hc:false,health:{}};
 const TD=new Date().toISOString().split('T')[0];
-let CF=null,CSV=1,CMT='lunch',SCAT=null;
+let CF=null,CSV=1,CMT='lunch',SCAT=null,ACTIVE_DATE=null;
 let SG='male',SA='moderate',SGL='maintain';
+let CY=new Date().getFullYear(),CMO=new Date().getMonth();
 
 function LS(){try{const s=localStorage.getItem('ct');if(s)ST={...ST,...JSON.parse(s),prof:{...ST.prof,...JSON.parse(s).prof}};}catch(e){}}
 function SS(){try{localStorage.setItem('ct',JSON.stringify(ST));}catch(e){}}
@@ -729,10 +783,12 @@ function cS(n){CSV=Math.max(0.5,CSV+n);uM();}
 function cM(){document.getElementById('fm').classList.remove('show');}
 function confAdd(){
   if(!CF)return;
+  const date=ACTIVE_DATE||TD;
   const e={id:Date.now().toString(),meal:CMT,n:CF.n,e:CF.e,s:CF.s,srv:CSV,cal:Math.round(CF.cal*CSV),p:Math.round(CF.p*CSV),c:Math.round(CF.c*CSV),f:Math.round(CF.f*CSV)};
-  if(!ST.logs[TD])ST.logs[TD]=[];ST.logs[TD].push(e);SS();cM();
+  if(!ST.logs[date])ST.logs[date]=[];ST.logs[date].push(e);SS();cM();
   toast(`✅ ${CF.e} ${CF.n} - ${e.cal} cal`);
-  setTimeout(()=>{go('home');rHome();},300);
+  const wasOther=ACTIVE_DATE&&ACTIVE_DATE!==TD;ACTIVE_DATE=null;
+  setTimeout(()=>{if(wasOther){go('calendar');rCalendar();}else{go('home');rHome();}},300);
 }
 
 // BMI
@@ -800,6 +856,57 @@ function rProfile(){
   rHealthCard();
   rMonthlySummary();
 }
+// ── CALENDAR ─────────────────────────────────────────────────
+function dKey(y,m,d){return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
+function chMo(dir){CMO+=dir;if(CMO>11){CMO=0;CY++;}if(CMO<0){CMO=11;CY--;}rCalendar();}
+function rCalendar(){
+  const goal=gGoal(),dim=new Date(CY,CMO+1,0).getDate();
+  const fd=(new Date(CY,CMO,1).getDay()+6)%7;
+  const now=new Date(),isCurMo=now.getFullYear()===CY&&now.getMonth()===CMO,todayD=isCurMo?now.getDate():-1;
+  const mName=new Date(CY,CMO,1).toLocaleDateString('en-PK',{month:'long',year:'numeric'});
+  document.getElementById('cal-mo-title').textContent=mName;
+  let tot=0,trk=0;
+  for(let d=1;d<=dim;d++){const logs=ST.logs[dKey(CY,CMO,d)]||[];const c=logs.reduce((s,e)=>s+e.cal,0);if(logs.length){tot+=c;trk++;}}
+  document.getElementById('cal-stats').innerHTML=`<div class="sbox"><div class="sv">${(tot/1000).toFixed(1)}k</div><div class="sl">🔥 کل</div></div><div class="sdiv"></div><div class="sbox"><div class="sv">${trk>0?Math.round(tot/trk):0}</div><div class="sl">📊 اوسط/دن</div></div><div class="sdiv"></div><div class="sbox"><div class="sv">${trk}/${dim}</div><div class="sl">📅 ٹریک</div></div>`;
+  document.getElementById('cal-hdr2').innerHTML=['Mo','Tu','We','Th','Fr','Sa','Su'].map(d=>`<div class="cal-dh">${d}</div>`).join('');
+  let h='<div class="cal-grid2" style="gap:5px">';
+  for(let i=0;i<fd;i++)h+='<div style="min-height:54px"></div>';
+  for(let d=1;d<=dim;d++){
+    const key=dKey(CY,CMO,d),logs=ST.logs[key]||[],cal=logs.reduce((s,e)=>s+e.cal,0),tracked=logs.length>0;
+    const isT=d===todayD,isFut=new Date(CY,CMO,d)>now;
+    let bg,tc;
+    if(!tracked){bg=isFut?'#fafafa':'#f5f5f5';tc='#ccc';}
+    else{const r=cal/goal;if(r<0.7){bg='#E3F2FD';tc='#1565C0';}else if(r<=1.1){bg='#E8F5E9';tc='#2E7D32';}else if(r<=1.3){bg='#FFF8E1';tc='#E65100';}else{bg='#FFEBEE';tc='#C62828';}}
+    const od=isT?'outline:2.5px solid #1a1a2e;':'';
+    const calTxt=tracked?(cal>=1000?(cal/1000).toFixed(1)+'k':cal):'';
+    h+=`<div class="cday" style="background:${bg};${od}" onclick="openDayD('${key}',${d})"><span class="cdnum" style="color:${isT?'#1a1a2e':tc}">${d}</span><span class="cdcal" style="color:${tc}">${calTxt}</span></div>`;
+  }
+  h+='</div>';
+  document.getElementById('cal-main').innerHTML=h;
+}
+function openDayD(key,d){
+  const logs=ST.logs[key]||[];
+  const dt=new Date(key);
+  const dStr=dt.toLocaleDateString('en-PK',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const tot=logs.reduce((s,e)=>s+e.cal,0);
+  let mh='';
+  MEALS.forEach(m=>{
+    const ents=logs.filter(e=>e.meal===m.k);if(!ents.length)return;
+    const mc=ents.reduce((s,e)=>s+e.cal,0);
+    mh+=`<div style="margin-bottom:12px"><div style="font-size:13px;font-weight:700;color:#555;margin-bottom:6px;display:flex;justify-content:space-between"><span>${m.e} ${m.l} <span style="color:#aaa;font-size:10px">${m.u}</span></span><span style="color:#FF9800">${mc} cal</span></div>`;
+    ents.forEach(e=>{mh+=`<div style="display:flex;align-items:center;padding:5px 0;border-bottom:1px solid #f5f5f5"><span style="font-size:18px;margin-right:8px">${e.e}</span><div style="flex:1"><div style="font-size:12px;font-weight:600">${e.n}</div><div style="font-size:10px;color:#aaa">${e.srv}x</div></div><span style="font-size:12px;font-weight:700;color:#FF9800">${e.cal}</span></div>`;});
+    mh+='</div>';
+  });
+  if(!mh)mh='<div style="text-align:center;padding:24px;color:#aaa"><div style="font-size:40px">📭</div><div style="margin-top:8px;font-size:13px">کوئی کھانا نہیں</div></div>';
+  document.getElementById('dd-date').textContent=dStr;
+  document.getElementById('dd-cal').textContent=tot?tot+' کیلوریز':'ابھی کچھ نہیں';
+  document.getElementById('dd-meals').innerHTML=mh;
+  const addBtn=document.getElementById('dd-add');
+  addBtn.textContent='+ '+d+' تاریخ کا کھانا شامل کریں';
+  addBtn.onclick=()=>{ACTIVE_DATE=key;document.getElementById('ddo').classList.remove('show');openMS();};
+  document.getElementById('ddo').classList.add('show');
+}
+
 // ── HEALTH SYNC ──────────────────────────────────────────────
 let scRunning=false,lastMag=9.8,stepCD=false;
 
@@ -940,7 +1047,7 @@ function go(n){
   document.getElementById('sc-'+n).classList.add('active');
   const nb=document.getElementById('n-'+n);if(nb)nb.classList.add('active');
   else document.getElementById('n-food').classList.add('active');
-  if(n==='home')rHome();else if(n==='bmi')rBMIForm();else if(n==='profile')rProfile();
+  if(n==='home')rHome();else if(n==='bmi')rBMIForm();else if(n==='profile')rProfile();else if(n==='calendar')rCalendar();
   window.scrollTo(0,0);
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
