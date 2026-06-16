@@ -310,6 +310,9 @@ input[type=number]:focus{border-color:#1a1a2e}
   <div class="bform">
     <div class="ftitle">📊 اپنی معلومات درج کریں</div>
     <div class="fsub">Enter Your Information</div>
+    <span class="ilbl">👤 نام / Your Name</span>
+    <input type="text" id="uname" placeholder="مثلاً: Abdul Majid" style="width:100%;border:1.5px solid #e0e0e0;border-radius:10px;padding:10px 12px;font-size:15px;color:#333;background:#fafafa;outline:none;margin-bottom:4px" oninput="prvID()">
+    <div id="id-preview" style="display:none;background:#e8eaf6;border-radius:8px;padding:8px 12px;margin-bottom:6px;font-size:13px;color:#1a1a2e;font-weight:600;text-align:center;letter-spacing:1px"></div>
     <span class="ilbl">جنس / Gender</span>
     <div class="grow">
       <div class="gbtn2 active" id="gm" onclick="sg('male')"><span class="ge2">👨</span><span class="gt2">Male - مرد</span></div>
@@ -334,7 +337,8 @@ input[type=number]:focus{border-color:#1a1a2e}
 <div id="sc-profile" class="screen">
   <div class="phdr">
     <div class="avt" id="avt">👨</div>
-    <div class="pname">میرا پروفائل</div>
+    <div class="pname" id="pname">میرا پروفائل</div>
+    <div style="background:rgba(255,255,255,.15);border-radius:20px;padding:4px 14px;display:inline-block;margin-bottom:8px;cursor:pointer" onclick="cpyID()" id="pid-badge"></div>
     <div class="pinfo" id="pi">25 سال | 70 kg | 170 cm</div>
     <button class="epbtn" onclick="go('bmi')">✏️ Profile Edit کریں</button>
   </div>
@@ -566,13 +570,35 @@ const MEALS=[{k:'breakfast',l:'Breakfast',u:'ناشتہ',e:'🌅'},{k:'lunch',l:
 const ACTS=[{k:'sedentary',l:'Sedentary',u:'بالکل سست',m:1.2,e:'🛋️'},{k:'light',l:'Lightly Active',u:'تھوڑا فعال',m:1.375,e:'🚶'},{k:'moderate',l:'Moderately Active',u:'درمیانہ فعال',m:1.55,e:'🏃'},{k:'active',l:'Very Active',u:'بہت فعال',m:1.725,e:'🏋️'},{k:'veryActive',l:'Extremely Active',u:'انتہائی فعال',m:1.9,e:'⚡'}];
 const BMIRS=[{mn:0,mx:16,l:'Severely Underweight',u:'بہت کم وزن',c:'#1565C0',e:'⚠️'},{mn:16,mx:18.5,l:'Underweight',u:'کم وزن',c:'#2196F3',e:'📉'},{mn:18.5,mx:25,l:'Normal / Healthy',u:'نارمل - صحت مند',c:'#4CAF50',e:'✅'},{mn:25,mx:30,l:'Overweight',u:'زیادہ وزن',c:'#FF9800',e:'⚡'},{mn:30,mx:35,l:'Obese Class I',u:'موٹاپا - درجہ ۱',c:'#FF5722',e:'⚠️'},{mn:35,mx:40,l:'Obese Class II',u:'موٹاپا - درجہ ۲',c:'#E53935',e:'🚨'},{mn:40,mx:999,l:'Obese Class III',u:'موٹاپا - درجہ ۳',c:'#B71C1C',e:'🆘'}];
 
-let ST={logs:{},prof:{w:70,h:170,age:25,g:'male',act:'moderate',goal:'maintain'},water:0,steps:0,hc:false};
+let ST={logs:{},prof:{w:70,h:170,age:25,g:'male',act:'moderate',goal:'maintain',name:'',uid:''},water:0,steps:0,hc:false};
 const TD=new Date().toISOString().split('T')[0];
 let CF=null,CSV=1,CMT='lunch',SCAT=null;
 let SG='male',SA='moderate',SGL='maintain';
 
-function LS(){try{const s=localStorage.getItem('ct');if(s)ST={...ST,...JSON.parse(s)};}catch(e){}}
+function LS(){try{const s=localStorage.getItem('ct');if(s)ST={...ST,...JSON.parse(s),prof:{...ST.prof,...JSON.parse(s).prof}};}catch(e){}}
 function SS(){try{localStorage.setItem('ct',JSON.stringify(ST));}catch(e){}}
+function mkUID(name){
+  const clean=name.trim().replace(/\s+/g,' ');
+  const parts=clean.split(' ');
+  let prefix='';
+  if(parts.length>=2){prefix=(parts[0].slice(0,3)+parts[parts.length-1].slice(0,2)).toUpperCase();}
+  else{prefix=clean.slice(0,5).toUpperCase();}
+  prefix=prefix.replace(/[^A-Z0-9]/g,'').padEnd(3,'X');
+  const seed=clean.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const num=String((seed*7+1234)%9000+1000);
+  return prefix+'-'+num;
+}
+function prvID(){
+  const nm=document.getElementById('uname').value.trim();
+  const pv=document.getElementById('id-preview');
+  if(nm.length>=2){const uid=mkUID(nm);pv.style.display='block';pv.textContent='🆔 آپ کی ID: '+uid;}
+  else{pv.style.display='none';}
+}
+function cpyID(){
+  const uid=ST.prof.uid;if(!uid)return;
+  navigator.clipboard?.writeText(uid).then(()=>toast('✅ ID copy ہو گئی: '+uid)).catch(()=>toast('🆔 آپ کی ID: '+uid));
+  if(!navigator.clipboard)toast('🆔 آپ کی ID: '+uid);
+}
 function gCal(){return(ST.logs[TD]||[]).reduce((s,e)=>s+e.cal,0);}
 function gMac(){return(ST.logs[TD]||[]).reduce((a,e)=>({p:a.p+e.p,c:a.c+e.c,f:a.f+e.f}),{p:0,c:0,f:0});}
 function gGoal(){const{w,h,age,g,act,goal}=ST.prof;let b=g==='male'?10*w+6.25*h-5*age+5:10*w+6.25*h-5*age-161;const m={sedentary:1.2,light:1.375,moderate:1.55,active:1.725,veryActive:1.9};let t=b*(m[act]||1.55);if(goal==='lose')t-=500;else if(goal==='gain')t+=500;return Math.round(t);}
@@ -672,7 +698,9 @@ function calcBMI(){
   const w=parseFloat(document.getElementById('bw').value)||70;
   const h=parseFloat(document.getElementById('bh').value)||170;
   const age=parseInt(document.getElementById('ba').value)||25;
-  ST.prof={w,h,age,g:SG,act:SA,goal:SGL};SS();
+  const nm=document.getElementById('uname').value.trim();
+  const uid=nm.length>=2?mkUID(nm):(ST.prof.uid||'');
+  ST.prof={w,h,age,g:SG,act:SA,goal:SGL,name:nm||ST.prof.name||'',uid};SS();
   const hm=h/100,bmi=+(w/(hm*hm)).toFixed(1);
   const rng=BMIRS.find(r=>bmi>=r.mn&&bmi<r.mx)||BMIRS[0];
   let bmr=SG==='male'?10*w+6.25*h-5*age+5:10*w+6.25*h-5*age-161;
@@ -696,6 +724,11 @@ function rProfile(){
   const{w,h,age,g}=ST.prof,goal=gGoal(),tc=gCal();
   const bv=+(w/((h/100)**2)).toFixed(1),rng=BMIRS.find(r=>bv>=r.mn&&bv<r.mx)||BMIRS[0];
   document.getElementById('avt').textContent=g==='female'?'👩':'👨';
+  const dname=ST.prof.name||'میرا پروفائل';
+  document.getElementById('pname').textContent=dname;
+  const pidEl=document.getElementById('pid-badge');
+  if(ST.prof.uid){pidEl.innerHTML=`<span style="font-size:10px;color:#ccc">🆔 ID</span> <span style="font-size:13px;font-weight:800;color:#fff;letter-spacing:1px">${ST.prof.uid}</span> <span style="font-size:10px;color:#aaa">tap to copy</span>`;}
+  else{pidEl.innerHTML=`<span style="font-size:12px;color:#ccc">✏️ Profile mein naam daal ke ID banao</span>`;}
   document.getElementById('pi').textContent=`${age} سال | ${w} kg | ${h} cm`;
   document.getElementById('psg').innerHTML=`
     <div class="scard2" style="border-top-color:#4CAF50"><div class="sce">🔥</div><div class="scv">${tc}</div><div class="scl2">آج کی Cal</div><div class="scs">/ ${goal} goal</div></div>
@@ -778,6 +811,7 @@ function toast(m){const t=document.getElementById('toast');t.textContent=m;t.cla
 LS();
 SG=ST.prof.g||'male';SA=ST.prof.act||'moderate';SGL=ST.prof.goal||'maintain';
 document.getElementById('bw').value=ST.prof.w||70;document.getElementById('bh').value=ST.prof.h||170;document.getElementById('ba').value=ST.prof.age||25;
+if(ST.prof.name)document.getElementById('uname').value=ST.prof.name;
 sg(SG);rHome();
 </script>
 </body>
